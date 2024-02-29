@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 <div>
     <h1>Editar Usuario</h1>
     <form action="{{ route('users.update', $user->id) }}" method="POST">
@@ -23,4 +21,4 @@
         </div>
     </form>
 </div>
-@endsection
+</x-app-layout>

@@ -54,10 +54,10 @@
                     <li class="dropdown active">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                         <ul class="dropdown-menu">
-                            <li class="{{ request()->is('dashboard') ? 'active' : '' }}">
+                            <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('dashboard') }}">General Dashboard</a>
                             </li>
-                            <li class="{{ request()->is('form') ? 'active' : '' }}">
+                            <li class="{{ request()->routeIs('form') ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('form') }}">Formulario</a>
                             </li>
                         </ul>
@@ -65,8 +65,11 @@
                     <li class="dropdown active">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Cambio de Precios</span></a>
                         <ul class="dropdown-menu">
-                            <li class="{{ request()->is('form.precio') ? 'active' : '' }}">
-                                <a class="nav-link" href="{{ route('form.precio') }}">Formulario Cambio de Precios</a>
+                            <li class="{{ request()->routeIs('registro.precio') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('registro.precio') }}">Registrar Precios</a>
+                            </li>
+                            <li class="{{ request()->routeIs('form.precio') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('form.precio') }}">Form Cambio de Precios</a>
                             </li>
                         </ul>
                     </li>
@@ -93,7 +96,6 @@
         @stack('modals')
 
         
-        @livewireScripts
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
         <!-- General JS Scripts -->
         <script src="{{asset('backend/assets/modules/jquery.min.js')}}"></script>
@@ -118,5 +120,6 @@
         <!-- Template JS File -->
         <script src="{{asset('backend/assets/js/scripts.js')}}"></script>
         <script src="{{asset('backend/assets/js/custom.js')}}"></script>
+        @livewireScripts
     </body>
 </html>

@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 <div>
     <h1>Crear Usuario</h1>
     
@@ -41,4 +39,4 @@
             <button type="submit" class="btn btn-primary">Crear Usuario</button>
         </form>
 </div>
-@endsection
+</x-app-layout>

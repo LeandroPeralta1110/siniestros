@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 <div>
     <h1>Usuarios</h1>
     <a href="{{ route('users.create') }}" class="btn btn-primary">Crear Nuevo Usuario</a>
@@ -35,4 +33,4 @@
         </tbody>
     </table>
 </div>
-@endsection
+</x-app-layout>

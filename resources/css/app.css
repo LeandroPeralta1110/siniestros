@@ -124,3 +124,50 @@ button:hover {
     color: #fff; /* Cambia el color del texto del botón cuando está activo */
     /* Agrega otros estilos según tu preferencia */
 }
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.file-upload {
+    margin-bottom: 20px;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-label {
+    background-color: #3490dc;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-button {
+    background-color: #38c172;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.select-label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.select-list {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
