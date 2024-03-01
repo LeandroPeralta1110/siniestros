@@ -4,6 +4,7 @@ use App\Http\Controllers\cambioPrecioController;
 use App\Http\Controllers\formaController;
 use App\Http\Controllers\UserController;
 use App\Http\Livewire\FormPreciosController;
+use App\Http\Livewire\FormSiniestrosController as LivewireFormSiniestrosController;
 use App\Http\Livewire\RegistrarPrecios;
 use App\Livewire\FormCambioPrecioController;
 use Illuminate\Support\Facades\Route;
@@ -37,8 +38,8 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 
-    Route::get('/form', FormSiniestrosController::class)->name('form');
-    Route::post('/submit', [formaController::class, 'submitForm'])->name('submit.form');
+    Route::get('/form', LivewireFormSiniestrosController::class)->name('form.siniestros');
+    Route::post('/submit', [LivewireFormSiniestrosController::class, 'submitForm'])->name('submit.form');
 
     route::get('form-precio', FormPreciosController::class)->name('form.precio');
     Route::post('/actualizar-precio-local', [FormPreciosController::class, 'actualizarPrecioLocal'])->name('actualizar-precio-local');

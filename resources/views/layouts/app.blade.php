@@ -64,8 +64,8 @@
                             <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('dashboard') }}">General Dashboard</a>
                             </li>
-                            <li class="{{ request()->routeIs('form') ? 'active' : '' }}">
-                                <a class="nav-link" href="{{ route('form') }}">Formulario</a>
+                            <li class="{{ request()->routeIs('form.siniestros') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('form.siniestros') }}">Formulario de Siniestros</a>
                             </li>
                         </ul>
                     </li>

@@ -372,8 +372,8 @@
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('form') }}" :active="request()->routeIs('form')">
-                {{ __('form') }}
+            <x-responsive-nav-link href="{{ route('form.siniestros') }}" :active="request()->routeIs('form')">
+                {{ __('form.siniestros') }}
             </x-responsive-nav-link>
         </div>
 
