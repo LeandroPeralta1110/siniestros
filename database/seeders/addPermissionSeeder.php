@@ -31,6 +31,8 @@ class addPermissionSeeder extends Seeder
         'editar-formularios',
         'eliminar-formularios',
         'ver-formularios',
+        'registrar-productos',
+        'editar-form-productos',
      ])->get();
 
      // Asigna los permisos al usuario

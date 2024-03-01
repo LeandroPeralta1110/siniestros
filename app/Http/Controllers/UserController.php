@@ -37,6 +37,11 @@ class UserController extends Controller
         $allowedRoles = $roles->filter(function ($role) {
             return $role === 'usuario';
         })->all();
+    } elseif (Auth::user()->roles->contains('name', 'supervisor-productos')) {
+        // Si el usuario es un supervisor, permitir solo el rol de usuario
+        $allowedRoles = $roles->filter(function ($role) {
+            return $role === 'usuario-productos';
+        })->all();
     }
     
     // Pasar los roles permitidos a la vista solo si hay roles permitidos
@@ -54,7 +59,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required', // Agregar validación para el rol
-            'legajo' => 'required|string|max:255', // Agregar validación para el legajo
+            'legajo' => 'string|max:255', // Agregar validación para el legajo
         ]);
     
         // Crear un nuevo usuario

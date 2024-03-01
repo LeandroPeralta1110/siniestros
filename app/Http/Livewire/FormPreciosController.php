@@ -1,9 +1,9 @@
 <?php
-
 namespace App\Http\Livewire;
 
 use Livewire\WithFileUploads;
 use App\Models\Precio;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Session;
 
 class FormPreciosController extends Component
 {
+    protected $listeners = ['actualizarPrecioLocal'];
+    public $cacheable = false;
     public $listasPrecios;
     public $selectedListaPrecio;
     public $productos;
@@ -30,12 +32,12 @@ class FormPreciosController extends Component
 
     public function actualizarSeleccion()
     {
-        // Limpiar los productos antes de actualizar
+        // Reiniciar la variable $productos antes de actualizar
         $this->productos = [];
     
         // Acceder al valor seleccionado por el usuario
         $listaPrecioId = $this->selectedListaPrecio;
-    
+        
         // Consulta a la base local
         $productosLocal = Precio::where('IdListaPrecio', $listaPrecioId)->get();
     
@@ -74,20 +76,39 @@ class FormPreciosController extends Component
         }
     }
 
-    public function actualizarPrecioLocal($idProducto, $nuevoPrecio)
+    public function actualizarPrecioLocal(Request $request)
     {
+        // Obtener los datos de la solicitud
+        $idProducto = $request->idProducto;
+        $nuevoPrecio = $request->nuevoPrecio;
+        $idListaPrecio = $request->idListaPrecio;
+    
+        // Obtener el precio original del producto
+        $precioOriginal = Precio::where('IdProducto', $idProducto)
+                            ->where('IdListaPrecio', $idListaPrecio)
+                            ->value('Precio');
+    
         // Actualizar el precio local en la base de datos
         $precioLocal = Precio::where('IdProducto', $idProducto)
-                            ->where('IdListaPrecio', $this->selectedListaPrecio)
+                            ->where('IdListaPrecio', $idListaPrecio)
                             ->first();
-
+        
         if ($precioLocal) {
             $precioLocal->Precio = $nuevoPrecio;
             $precioLocal->save();
-
-            // Después de actualizar el precio local, volver a cargar los productos
-           
         }
+    
+        // Actualizar la lista de productos para reflejar los cambios actualizados
+        $this->actualizarSeleccion();
+    
+        // Comprobar si el nuevo precio difiere del precio original
+        $precioDifiere = ($nuevoPrecio != $precioOriginal);
+    
+        // Devolver una respuesta con la información necesaria
+        return response()->json([
+            'message' => 'Datos actualizados correctamente.',
+            'precioDifiere' => $precioDifiere
+        ]);
     }
 
     public function procesarArchivoExcel()
@@ -172,47 +193,8 @@ class FormPreciosController extends Component
             // Actualizar el precio local en la lista de productos
             $this->productos[$idProducto]['PrecioLocal'] = $precioSQL;
         }
-
-        // Actualizar la selección para reflejar los cambios en la tabla
-        $this->actualizarSeleccion();
     }
 }
-
-    
-
-   /*  public function updatedSelectedListaPrecio($value)
-    {
-        // La función updated se llama automáticamente cuando selectedListaPrecio cambia
-        $this->getProductos($value);
-    }
-
-    public function getProductos($listaPrecioId)
-    {
-        // Consulta a la base local
-        $productosLocal = Precio::where('IdListaPrecio', $listaPrecioId)->get();
-
-        // Consulta a la base SQL
-        $productosSQL = DB::connection('sqlsrv')
-            ->table('precios')
-            ->join('productos', 'precios.IdProducto', '=', 'productos.idProducto')
-            ->select('productos.idProducto','productos.Descripcion', 'precios.Precio as precioSQL')
-            ->where('precios.IdListaPrecio', $listaPrecioId)
-            ->get();
-
-        // Actualizar la propiedad $productos
-        $this->productos = [
-            'productosLocal' => $productosLocal,
-            'productosSQL' => $productosSQL
-        ];
-    }
-
-    public function fetchData()
-    {
-        // Simular la obtención de datos desde el servidor
-        $this->datos = ['Dato 1', 'Dato 2', 'Dato 3'];
-
-        // Puedes realizar aquí otras operaciones con los datos si es necesario
-    } */
 
     public function render()
     {

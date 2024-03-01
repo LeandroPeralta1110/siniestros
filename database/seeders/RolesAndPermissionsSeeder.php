@@ -31,9 +31,32 @@ class RolesAndPermissionsSeeder extends Seeder
             'editar-formularios',
             'eliminar-formularios',
             'ver-formularios',
+            'registrar-productos',
+            'editar-form-productos',
             // Agregar más permisos según sea necesario
         ];
         $this->syncPermissions($adminRole, $adminPermissions);
+
+        // Crear o verificar el rol supervisor-productos
+        $supervisorProductosRole = Role::firstOrCreate(['name' => 'supervisor-productos']);
+
+        // Crear o actualizar permisos para el rol supervisor-productos
+        $supervisorProductosPermissions = [
+            'registrar-productos',
+            'editar-form-productos',
+            // Agregar más permisos para supervisor-productos según sea necesario
+        ];
+        $this->syncPermissions($supervisorProductosRole, $supervisorProductosPermissions);
+
+         // Crear o verificar el rol usuario-productos
+         $usuarioProductosRole = Role::firstOrCreate(['name' => 'usuario-productos']);
+
+         // Crear o actualizar permisos para el rol usuario-productos
+         $usuarioProductosPermissions = [
+             'editar-form-productos',
+             // Agregar más permisos para usuario-productos según sea necesario
+         ];
+         $this->syncPermissions($usuarioProductosRole, $usuarioProductosPermissions);
 
         // Crear o verificar el rol supervisor
         $supervisorRole = Role::firstOrCreate(['name' => 'supervisor']);

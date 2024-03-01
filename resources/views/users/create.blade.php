@@ -17,7 +17,7 @@
 
             <div class="form-group">
                 <label for="legajo">Legajo</label>
-                <input type="text" name="legajo" id="legajo" class="form-control" required>
+                <input type="text" name="legajo" id="legajo" class="form-control">
             </div>
 
             <div class="form-group">

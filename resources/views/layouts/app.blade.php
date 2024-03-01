@@ -5,7 +5,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>IVSForm</title>
+
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+        <!-- Icono de formulario -->
+        <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M2 3v18h20V3H2zm1 1h18v16H3V4zm8 5v2h6V9h-6zm0 4v2h6v-2h-6zm0 4v2h6v-2h-6zM5 9h2v2H5V9zm0 4h2v2H5v-2zm0 4h2v2H5v-2z'/%3E%3C/svg%3E">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -50,6 +56,7 @@
                     <a href="index.html">IVS</a>
                 </div>
                 <ul class="sidebar-menu">
+                    @can('crear-formularios')
                     <li class="menu-header">Dashboard</li>
                     <li class="dropdown active">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
@@ -62,15 +69,20 @@
                             </li>
                         </ul>
                     </li>
+                    @endcan
                     <li class="dropdown active">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Cambio de Precios</span></a>
                         <ul class="dropdown-menu">
+                            @can('registrar-productos')
                             <li class="{{ request()->routeIs('registro.precio') ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('registro.precio') }}">Registrar Precios</a>
                             </li>
+                            @endcan
+                            @can('editar-form-productos')
                             <li class="{{ request()->routeIs('form.precio') ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('form.precio') }}">Form Cambio de Precios</a>
                             </li>
+                            @endcan
                         </ul>
                     </li>
                 </ul>
@@ -82,17 +94,18 @@
                 </div>
             </div>
               
-            
             @livewire('navigation-menu')
             
             <main class="main-content">
                 {{$slot}}
             </main>
             
-
-            <!-- Page Content -->
+            <footer class="main-footer">
+                <div class="footer-left">
+                    Todos los derechos reservados - Área de Sistemas, Ivess El Jumillano &copy; <?php echo date("Y"); ?>
+                </div>
+            </footer>
         
-
         @stack('modals')
 
         

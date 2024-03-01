@@ -9,14 +9,15 @@ use App\Models\Precio;
 class RegistrarPrecios extends Component
 {
     public $productosDiferidosPorLista = [];
+    public $listasPrecios;
 
     public function mount()
     {
         // Obtener todas las listas de precios disponibles
-        $listasPrecios = DB::connection('sqlsrv')->table('precios')->distinct()->pluck('IdListaPrecio');
-
+        $this->listasPrecios = DB::connection('sqlsrv')->table('Listas')->distinct()->pluck('idListaPrecio','Descrp');
+       /*  dd($this->listasPrecios); */
         // Iterar sobre las listas de precios
-        foreach ($listasPrecios as $listaPrecioId) {
+        foreach ($this->listasPrecios as $listaPrecioId) {
             // Obtener los productos de la lista de precios SQL
             $productosSQL = DB::connection('sqlsrv')
                                 ->table('precios')
