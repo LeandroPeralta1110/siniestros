@@ -1,9 +1,35 @@
 <div>
     <h1>Registro de precios</h1>
     <hr> <!-- Línea divisoria -->
-    <div class="text-right"> <!-- Contenedor para alinear el botón a la derecha -->
-        <button class="btn btn-primary">Registrar Precios</button>
+    <div style="display: flex; justify-content: space-between;" class="pb-3">
+        <button wire:click="actualizarDescuentos" class="btn btn-primary mr-6" style="margin-right: 10px;">
+            <!-- Mostrar icono de carga si se está procesando la acción -->
+            Registrar Descuentos
+            <span wire:loading wire:target="actualizarDescuentos" class="cargando-icono" role="status" aria-hidden="true"></span>
+        </button>
+        <button wire:click="registrarPrecios" class="btn btn-primary mr-6" style="margin-right: 10px;">
+            <!-- Mostrar icono de carga si se está procesando la acción -->
+            Registrar Cambio de Precios
+            <span wire:loading wire:target="registrarPrecios" class="cargando-icono" role="status" aria-hidden="true"></span>
+        </button>
+        <button wire:click="aplicarDescuentosClientes" class="btn btn-primary">
+            <!-- Mostrar icono de carga si se está procesando la acción -->
+            Aplicar Descuentos Clientes
+            <span wire:loading wire:target="aplicarDescuentosClientes" class="cargando-icono" role="status" aria-hidden="true"></span>
+        </button>
     </div>
+    <!-- Mostrar mensaje de éxito si está presente -->
+    @if ($successMessage)
+        <div class="alert alert-success" role="alert">
+            {{ $successMessage }}
+        </div>
+    @endif
+    <!-- Mostrar mensaje de error si está presente -->
+    @if ($errorMessage)
+        <div class="alert alert-error" role="alert">
+            {{ $errorMessage }}
+        </div>
+    @endif
     @if ($productosDiferidosPorLista)
     @foreach ($productosDiferidosPorLista as $nombreListaPrecio => $productos)
     @php

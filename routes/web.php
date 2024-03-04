@@ -45,7 +45,7 @@ Route::middleware([
     Route::post('/actualizar-precio-local', [FormPreciosController::class, 'actualizarPrecioLocal'])->name('actualizar-precio-local');
 
     route::get('registro-precio' , RegistrarPrecios::class)->name('registro.precio');
-
+    Route::post('/restaurar-precio', [FormPreciosController::class, 'restaurarPrecio'])->name('restaurar.precio');
     
     Route::middleware('can:crear-usuarios')->group(function () {
         Route::resource('/users', UserController::class);
