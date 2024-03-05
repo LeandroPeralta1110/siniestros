@@ -1,38 +1,40 @@
 <x-app-layout>
-    @section('content')
-    <div class="row mt-3">
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-          <div class="card card-statistic-1">
-            <div class="card-icon bg-primary">
-                <i class="far fa-file"></i>
-              
+  <div class="row mt-3">
+    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+        <a href="{{ route('form.siniestros') }}">
+            <div class="card card-statistic-1">
+                <div class="card-icon bg-primary">
+                    <i class="far fa-file"></i>
+                </div>
+                <div class="card-wrap">
+                    <div class="card-header">
+                        <h4>Form Siniestros</h4>
+                    </div>
+                   {{--  <div class="card-body">
+                        10
+                    </div> --}}
+                </div>
             </div>
-            <div class="card-wrap">
-              <div class="card-header">
-                <h4>Total Siniestros</h4>
-              </div>
-              <div class="card-body">
-                10
-              </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+        <a href="{{ route('form.precio') }}">
+            <div class="card card-statistic-1">
+                <div class="card-icon bg-danger">
+                    <i class="far fa-newspaper"></i>
+                </div>
+                <div class="card-wrap">
+                    <div class="card-header">
+                        <h4>Cambio de Precios</h4>
+                    </div>
+                    {{-- <div class="card-body">
+                        42
+                    </div> --}}
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-          <div class="card card-statistic-1">
-            <div class="card-icon bg-danger">
-              <i class="far fa-newspaper"></i>
-            </div>
-            <div class="card-wrap">
-              <div class="card-header">
-                <h4>Nuevos</h4>
-              </div>
-              <div class="card-body">
-                42
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+        </a>
+    </div>
+        {{-- <div class="col-lg-3 col-md-6 col-sm-6 col-12">
           <div class="card card-statistic-1">
             <div class="card-icon bg-warning">
                 <i class="fas fa-circle"></i>
@@ -61,7 +63,6 @@
               </div>
             </div>
           </div>
-        </div>                  
+        </div>    --}}               
       </div>
-    @endsection
 </x-app-layout>

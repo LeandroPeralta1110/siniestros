@@ -170,33 +170,92 @@ class FormPreciosController extends Component
     }
     
     public function restaurarPrecio($idProducto, $idListaPrecio)
-{
-    // Obtener el precio SQL correspondiente al producto
-    $precioSQL = null;
-    foreach ($this->productos as $key => $producto) {
-        if ($producto['idProducto'] == $idProducto && $producto['idListaPrecio'] == $idListaPrecio) {
-            $precioSQL = $producto['PrecioSQL'];
-            break;
-        }
-    }
-
-    // Restaurar el precio local al precio SQL
-    if ($precioSQL !== null) {
-        // Actualizar el precio local del producto en la base de datos
-        $producto = Precio::where('idProducto', $idProducto)
-                        ->where('IdListaPrecio', $idListaPrecio)
-                        ->firstOrFail(); // Obtiene el producto específico o lanza una excepción si no se encuentra
-        $producto->Precio = $precioSQL;
-        $producto->save();
-
-        // Actualizar el precio local en la lista de productos
+    {
+        // Obtener el precio SQL correspondiente al producto
+        $precioSQL = null;
         foreach ($this->productos as $key => $producto) {
             if ($producto['idProducto'] == $idProducto && $producto['idListaPrecio'] == $idListaPrecio) {
-                $this->productos[$key]['PrecioLocal'] = $precioSQL;
+                $precioSQL = $producto['PrecioSQL'];
                 break;
             }
         }
+
+        // Restaurar el precio local al precio SQL
+        if ($precioSQL !== null) {
+            // Actualizar el precio local del producto en la base de datos
+            $producto = Precio::where('idProducto', $idProducto)
+                            ->where('IdListaPrecio', $idListaPrecio)
+                            ->firstOrFail(); // Obtiene el producto específico o lanza una excepción si no se encuentra
+            $producto->Precio = $precioSQL;
+            $producto->save();
+
+            // Actualizar el precio local en la lista de productos
+            foreach ($this->productos as $key => $producto) {
+                if ($producto['idProducto'] == $idProducto && $producto['idListaPrecio'] == $idListaPrecio) {
+                    $this->productos[$key]['PrecioLocal'] = $precioSQL;
+                    break;
+                }
+            }
+        }
     }
+
+    public function restaurarPreciosALL()
+{
+    // Consulta a la base local
+    $productosLocal = Precio::all();
+
+    // Consulta a la base SQL
+    $productosSQL = DB::connection('sqlsrv')
+                    ->table('precios')
+                    ->join('productos', 'precios.IdProducto', '=', 'productos.idProducto')
+                    ->select('productos.idProducto', 'productos.Descripcion', 'precios.Precio as precioSQL', 'precios.IdListaPrecio')
+                    ->get();
+
+    // Combinar productos locales y de SQL en una sola matriz
+    $productosTotales = [];
+
+    // Agregar productos locales al array
+    foreach ($productosLocal as $productoLocal) {
+        $productosTotales[$productoLocal->idProducto][$productoLocal->idListaPrecio] = [
+            'idProducto' => $productoLocal->idProducto,
+            'IdListaPrecio' => $productoLocal->idListaPrecio,
+            'PrecioLocal' => $productoLocal->Precio, // Agregar el precio local aquí
+            'PrecioSQL' => null, // El precio SQL se desconoce inicialmente
+            'Descripcion' => $productoLocal->Descripcion
+        ];
+    }
+
+    // Agregar productos SQL al array
+    foreach ($productosSQL as $productoSQL) {
+        $productosTotales[$productoSQL->idProducto][$productoSQL->IdListaPrecio] = [
+            'idProducto' => $productoSQL->idProducto,
+            'IdListaPrecio' => $productoSQL->IdListaPrecio,
+            'PrecioLocal' => $productosTotales[$productoSQL->idProducto][$productoSQL->IdListaPrecio]['PrecioLocal'], // Usar el precio local del primer array
+            'PrecioSQL' => $productoSQL->precioSQL,
+            'Descripcion' => $productoSQL->Descripcion
+        ];
+    }
+    
+    // Iterar sobre los productos totales para comparar y actualizar los precios
+    foreach ($productosTotales as $productosPorId) {
+        foreach ($productosPorId as $producto) {
+            // Verificar si el producto tiene un precio local y un precio de SQL
+            if (!empty($producto['PrecioLocal']) && !empty($producto['PrecioSQL'])) {
+                // Verificar si el precio local difiere del precio de SQL
+                if ($producto['PrecioLocal'] != $producto['PrecioSQL']) {
+                    // Actualizar el precio local con el precio de SQL
+                    $productoDB = Precio::where('idProducto', $producto['idProducto'])
+                                        ->where('IdListaPrecio', $producto['IdListaPrecio'])
+                                        ->firstOrFail();
+                    
+                    $productoDB->Precio = $producto['PrecioSQL'];
+                    $productoDB->save();
+                }
+            }
+        }
+    }
+    $this->actualizarSeleccion();
+
 }
 
 public function procesarArchivoExcel()

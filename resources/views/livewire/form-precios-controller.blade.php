@@ -44,7 +44,11 @@
             </select>
         </div>
     </div>
-    
+
+    <div>
+        <button wire:click="restaurarPreciosALL" class="btn btn-primary">Restaurar todos</button>
+    </div>
+
     @if($productos)
     <table class="table">
         <thead>
