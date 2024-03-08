@@ -1,5 +1,6 @@
 <x-app-layout>
   <div class="row mt-3">
+    @can('crear-formularios')
     <div class="col-lg-3 col-md-6 col-sm-6 col-12">
         <a href="{{ route('form.siniestros') }}">
             <div class="card card-statistic-1">
@@ -17,6 +18,8 @@
             </div>
         </a>
     </div>
+    @endcan
+    @can('editar-form-productos')
     <div class="col-lg-3 col-md-6 col-sm-6 col-12">
         <a href="{{ route('form.precio') }}">
             <div class="card card-statistic-1">
@@ -34,6 +37,7 @@
             </div>
         </a>
     </div>
+    @endcan
         {{-- <div class="col-lg-3 col-md-6 col-sm-6 col-12">
           <div class="card card-statistic-1">
             <div class="card-icon bg-warning">

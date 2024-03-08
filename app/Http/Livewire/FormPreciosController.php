@@ -69,7 +69,8 @@ class FormPreciosController extends Component
             $precioSQL = DB::connection('sqlsrv')
                     ->table('precios')
                     ->join('productos', 'precios.IdProducto', '=', 'productos.idProducto')
-                    ->select('precios.Precio as precioSQL','productos.Descripcion')
+                    ->join('listas','precios.IdListaPrecio', '=', 'listas.IdListaPrecio')
+                    ->select('precios.Precio as precioSQL','productos.Descripcion','listas.Descrp as descripcionLista')
                     ->where('precios.IdListaPrecio', $idListaPrecio)
                     ->where('productos.idProducto', $idProducto)
                     ->first();
@@ -79,11 +80,13 @@ class FormPreciosController extends Component
                 'idListaPrecio' => $idListaPrecio, // Utiliza $idListaPrecio en lugar de $producto->idListaPrecio
                 'idProducto' => $idProducto, // Utiliza $idProducto en lugar de $producto->idProducto
                 'Descripcion' => $precioSQL->Descripcion, // Accede a la descripción desde $precioSQL
+                'descripcionLista' => $precioSQL->descripcionLista,
                 'PrecioLocal' => $precioLocal,
                 'PrecioSQL' => $precioSQL->precioSQL, // Accede al precio desde $precioSQL
             ];
         }
     }
+    /* dd($this->productos); */
 }
 
     public function actualizarSeleccion()
@@ -111,7 +114,8 @@ class FormPreciosController extends Component
         $productosSQL = DB::connection('sqlsrv')
                         ->table('precios')
                         ->join('productos', 'precios.IdProducto', '=', 'productos.idProducto')
-                        ->select('productos.idProducto', 'productos.Descripcion', 'precios.Precio as precioSQL')
+                        ->join('listas','precios.IdListaPrecio', '=', 'listas.IdListaPrecio')
+                        ->select('productos.idProducto', 'productos.Descripcion', 'precios.Precio as precioSQL','listas.Descrp as descripcionLista')
                         ->where('precios.IdListaPrecio', $listaPrecioId)
                         ->get();
     
@@ -121,6 +125,7 @@ class FormPreciosController extends Component
                 // Si el producto ya existe en la lista local, actualizar su precio SQL
                 $this->productos[$productoSQL->idProducto]['PrecioSQL'] = $productoSQL->precioSQL;
                 $this->productos[$productoSQL->idProducto]['Descripcion'] = $productoSQL->Descripcion;
+                $this->productos[$productoSQL->idProducto]['descripcionLista'] = $productoSQL->descripcionLista;
             } else {
                 // Si el producto no existe en la lista local, agregarlo con su precio SQL
                 $this->productos[$productoSQL->idProducto] = [
@@ -133,7 +138,7 @@ class FormPreciosController extends Component
             }
         }
         
-        /* dd($this->productos); */
+       /*   dd($this->productos); */
     }
 
     public function actualizarPrecioLocal(Request $request)
@@ -259,62 +264,140 @@ class FormPreciosController extends Component
 }
 
 public function procesarArchivoExcel()
-    {
-        // Obtener la extensión del archivo
-        $extension = $this->excelFile->getClientOriginalExtension();
-        // Verificar si la extensión es de Excel
-        if ($extension == 'xls' || $extension == 'xlsx') {
-            // Crear un nuevo objeto PhpSpreadsheet para leer el archivo
-            $documento = IOFactory::load($this->excelFile->getRealPath());
+{
+    $this->validate([
+        'excelFile' => 'required|mimes:csv,txt,xlsx|max:2048',
+    ]);
+
+    // Obtener la extensión del archivo
+    $extension = $this->excelFile->getClientOriginalExtension();
     
-            // Obtener la primera hoja del documento
-            $hoja = $documento->getActiveSheet();
-    
-            // Obtener el número total de filas con datos en la hoja
-            $totalFilas = $hoja->getHighestDataRow();
-    
-            // Array para almacenar los datos procesados del archivo Excel
-            $datosArchivo = [];
-    
-            // Iterar sobre las filas para obtener los datos
-            for ($i = 2; $i <= $totalFilas; $i++) { // Empezamos desde la fila 2 para omitir la fila de encabezados
-                // Obtener los valores de las celdas en la fila actual y limpiarlos
-                $idListaPrecio = strval($hoja->getCell('A'.$i)->getValue());
-                $idProducto = strval($hoja->getCell('B'.$i)->getValue());
-                $precio = $hoja->getCell('C'.$i)->getValue();
-                $precio = trim($precio); // Limpiar el valor de espacios en blanco
-               /*  dd($precio); */
-                // Validar si el precio es un número válido
-                if (is_numeric($precio)) {
-                    // Convertir el precio a decimal y formatearlo con tres decimales
-                    $precioDecimal = number_format(floatval($precio), 3, '.', '');
-    
-                    // Almacenar los datos en un array asociativo
-                    $datosArchivo[] = [
-                        'idListaPrecio' => $idListaPrecio,
-                        'idProducto' => $idProducto,
-                        'precio' => $precioDecimal
-                    ];
-    
-                    // Actualizar el precio del producto en la base de datos local
-                    Precio::where('IdListaPrecio', $idListaPrecio)
-                          ->where('IdProducto', $idProducto)
-                          ->update(['Precio' => $precioDecimal]);
-                } else {
-                    // Mostrar un mensaje de error si el precio no es un número válido
-                    $this->errorMessage = 'El precio en la fila '.$i.' no es un número válido.';
+    // Verificar si la extensión es de Excel
+    if ($extension == 'xls' || $extension == 'xlsx') {
+        // Crear un nuevo objeto PhpSpreadsheet para leer el archivo
+        $documento = IOFactory::load($this->excelFile->getRealPath());
+
+        // Obtener la quinta hoja del documento por su nombre
+        $hoja = $documento->getSheetByName('Sheet5');
+
+        // Verificar si la hoja se encontró
+        if ($hoja) {
+            // Array para almacenar los datos de la tabla
+            $datos = [];
+
+            // Array para almacenar los encabezados
+            $headers = [];
+
+            // Definir el rango de celdas para los encabezados
+            $encabezadosRange = 'A5:K5';
+            // Leer los encabezados de la quinta fila
+            $encabezadosData = $hoja->rangeToArray($encabezadosRange, null, true, true, true);
+            $headers = $encabezadosData[5];
+
+            $encabezadosRange2 = 'Q5:V5';
+            // Leer los encabezados de la quinta fila
+            $encabezadosData2 = $hoja->rangeToArray($encabezadosRange2, null, true, true, true);
+            $headers2 = $encabezadosData2[5];
+           
+           // Definir el mapeo entre los encabezados y los IDs de lista de precios para la primera tabla
+        $mapeoIdListaPrecios = [
+            'GBA' => 1, // ID 1 para GBA
+            'CABA' => 222, // ID 222 para CABA
+            'F/C GBA' => '07', // ID '07' para F/C GBA
+            'F/C CABA' => 333, // ID 333 para F/C CABA
+            'FRANQUICIAS' => 'L10', // ID 'L10' para FRANQUICIAS
+            'Municipalidad 3F' => 10, // ID 10 para Municipalidad 3F
+            'Colegios' => 555, // ID 555 para Colegios
+            'Promociones' => null, // No asociar Promociones a ningún ID de lista de precios
+        ];
+
+        // Definir el mapeo entre los encabezados y el idListaPrecio 60 para la segunda tabla
+        $mapeo2IdListaPrecios = [
+            'Código' => 90,
+            'PRODUCTO' => 90,
+            'Precio' => 90,
+        ];
+
+        // Procesar la primera tabla
+        $datosRangeTabla1 = 'A6:K25';
+        $datosDataTabla1 = $hoja->rangeToArray($datosRangeTabla1, null, true, true, true);
+
+        $datos = [];
+
+        foreach ($datosDataTabla1 as $fila => $rowData) {
+            if (isset($rowData['A']) && strlen($rowData['A']) <= 5) {
+                $producto = $rowData['A'];
+
+                for ($i = 3; $i <= 11; $i++) {
+                    $precio = $rowData[chr(64 + $i)];
+                    $clave = $headers[chr(64 + $i)] ?? null;
+
+                    if ($clave && $precio !== null && $precio !== '') {
+                        $idListaPrecio = $mapeoIdListaPrecios[$clave] ?? null;
+
+                        if ($idListaPrecio !== null) {
+                            $datos[] = [
+                                'idListaPrecio' => $idListaPrecio,
+                                'idProducto' => $producto,
+                                'precio' => $precio,
+                            ];
+                        }
+                    }
                 }
             }
-    
-            // Definir la variable $successMessage
-            $this->successMessage = 'Archivo Excel procesado correctamente.';
-            // Asignar el mensaje de éxito a la sesión
-    
-        } else {
-            // Mostrar un mensaje de error si el archivo no es de Excel
-            session()->flash('error', 'El archivo seleccionado no es un archivo Excel válido.');
         }
-    }
+
+        // Procesar la segunda tabla
+        $datosRange2 = 'Q6:V16';
+        $datosData2 = $hoja->rangeToArray($datosRange2, null, true, true, true);
+
+        foreach ($datosData2 as $fila => $rowData) {
+            if (isset($rowData['Q']) && strlen($rowData['Q']) <= 5) {
+                $producto = $rowData['Q'];
+                $precio = $rowData['U']; // El precio está en la columna T según tu descripción
+
+                // Asignar el idListaPrecio 60 para los productos de la segunda tabla
+                $datos[] = [
+                    'idListaPrecio' => $mapeo2IdListaPrecios['Precio'],
+                    'idProducto' => $producto,
+                    'precio' => $precio,
+                ];
+            }
+        }
+       
+            // Recorrer los datos procesados del Excel
+            foreach ($datos as $dato) {
+                $idListaPrecio = $dato['idListaPrecio'];
+                $idProducto = $dato['idProducto'];
+                $precioNuevo = $dato['precio'];
+            
+                // Eliminar el signo "$" y las comas del precio
+                $precioNuevo = str_replace(['$', ','], '', $precioNuevo);
+            
+                // Convertir el precio a un formato decimal
+                $precioNuevo = number_format((float) $precioNuevo, 3, '.', ''); // Formato con tres decimales
+            
+                // Buscar en la base de datos local el precio existente para el mismo idListaPrecio y idProducto
+                $precioExistente = Precio::where('idListaPrecio', $idListaPrecio)
+                                        ->where('idProducto', $idProducto)
+                                        ->first();
+
+                // Si el precio existe, actualizarlo; de lo contrario, crear un nuevo registro en la base de datos
+                if ($precioExistente) {
+                    $precioExistente->precio = $precioNuevo;
+                    $precioExistente->save();
+                    $this->actualizarSeleccion();
+                } 
+            }
+                } else {
+                    // Mostrar un mensaje de error si no se encontró la quinta hoja
+                    session()->flash('error', 'La hoja "Sheet5" no se encontró en el archivo.');
+                }
+            } else {
+                // Mostrar un mensaje de error si el archivo no es de Excel
+                session()->flash('error', 'El archivo seleccionado no es un archivo Excel válido.');
+            }
+        }
 
     public function render()
     {

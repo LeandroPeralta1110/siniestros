@@ -10,7 +10,15 @@ use Livewire\Component;
 
 class FormSiniestrosController extends Component
 {
-    public function submitForm(Request $request)
+    private function guardarImagen($imagen)
+{
+    $nombreArchivo = $imagen->getClientOriginalName();
+    $rutaImagen = 'images/' . $nombreArchivo;
+    $imagen->move(public_path('images'), $nombreArchivo);
+    return $rutaImagen;
+}
+
+public function submitForm(Request $request)
 {
     // Obtener el usuario autenticado
     $user = Auth::user();
@@ -19,6 +27,16 @@ class FormSiniestrosController extends Component
 
     // Capturar los datos del formulario
     $datos = $request->all();
+    
+    // Guardar las imágenes y actualizar los datos del formulario con las rutas relativas
+    if ($request->hasFile('imagen1')) {
+        $rutaImagen1 = $this->guardarImagen($request->file('imagen1'));
+        $datos['imagen1'] = $rutaImagen1;
+    }
+    if ($request->hasFile('imagen2')) {
+        $rutaImagen2 = $this->guardarImagen($request->file('imagen2'));
+        $datos['imagen2'] = $rutaImagen2;
+    }
     
     // Crear un nuevo objeto TCPDF
     $pdf = new TCPDF();
@@ -78,7 +96,12 @@ private function agregarTabla($pdf, $datos, $keys, $alturaMaximaTabla)
             // Obtener el valor del dato del formulario
             $value = $datos[$key] ?? '';
             // Agregar una fila a la tabla con el nombre personalizado y el valor
-            $contenido .= "<tr><td>{$nombrePersonalizado}</td><td>{$value}</td></tr>";
+            if (strpos($key, 'imagen') === false) {
+                $contenido .= "<tr><td>{$nombrePersonalizado}</td><td>{$value}</td></tr>";
+            } else {
+                // Si es una imagen, mostrarla
+                $contenido .= "<tr><td>{$nombrePersonalizado}</td><td><img src='{$value}'></td></tr>";
+            }
         }
         $contenido .= '</table>';
         
@@ -98,7 +121,12 @@ private function agregarTabla($pdf, $datos, $keys, $alturaMaximaTabla)
             // Obtener el valor del dato del formulario
             $value = $datos[$key] ?? '';
             // Agregar una fila a la tabla con el nombre personalizado y el valor
-            $contenido .= "<tr><td>{$nombrePersonalizado}</td><td>{$value}</td></tr>";
+            if (strpos($key, 'imagen') !== false) {
+                // Si es una imagen, mostrarla
+                $contenido .= "<tr><td>{$nombrePersonalizado}</td><td><img src='{$value}'></td></tr>";
+            } else {
+                $contenido .= "<tr><td>{$nombrePersonalizado}</td><td>{$value}</td></tr>";
+            }
         }
         $contenido .= '</table>';
         

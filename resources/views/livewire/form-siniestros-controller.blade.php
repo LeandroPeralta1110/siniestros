@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="second-grid">
-                <form id="formulario" action="{{ route('submit.form') }}" method="POST">
+                <form id="formulario" action="{{ route('submit.form') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div id="Empresa_/_Sucursal" class="tabcontent">
                         <h2>Empresa / Sucursal</h2>

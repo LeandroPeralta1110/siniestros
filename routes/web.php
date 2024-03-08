@@ -37,12 +37,16 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+    
+    Route::middleware(['can:crear-formularios'])->group(function () {
+        Route::get('/form', LivewireFormSiniestrosController::class)->name('form.siniestros');
+        Route::post('/submit', [LivewireFormSiniestrosController::class, 'submitForm'])->name('submit.form');
+    });
 
-    Route::get('/form', LivewireFormSiniestrosController::class)->name('form.siniestros');
-    Route::post('/submit', [LivewireFormSiniestrosController::class, 'submitForm'])->name('submit.form');
-
-    route::get('form-precio', FormPreciosController::class)->name('form.precio');
-    Route::post('/actualizar-precio-local', [FormPreciosController::class, 'actualizarPrecioLocal'])->name('actualizar-precio-local');
+    Route::middleware(['can:editar-form-productos'])->group(function () {
+        route::get('form-precio', FormPreciosController::class)->name('form.precio');
+        Route::post('/actualizar-precio-local', [FormPreciosController::class, 'actualizarPrecioLocal'])->name('actualizar-precio-local');
+    });
 
     route::get('registro-precio' , RegistrarPrecios::class)->name('registro.precio');
     Route::post('/restaurar-precio', [FormPreciosController::class, 'restaurarPrecio'])->name('restaurar.precio');

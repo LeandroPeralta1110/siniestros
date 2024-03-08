@@ -59,9 +59,8 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required', // Agregar validación para el rol
-            'legajo' => 'string|max:255', // Agregar validación para el legajo
         ]);
-    
+
         // Crear un nuevo usuario
         $user = User::create([
             'name' => $request->name,
@@ -69,19 +68,19 @@ class UserController extends Controller
             'password' => bcrypt($request->password),
             'legajo' => $request->legajo, // Guardar el legajo del usuario
         ]);
-    
+
         // Obtener el rol según el ID proporcionado en el formulario
         $roleId = $request->role;
         $role = Role::findOrFail($roleId);
-    
+
         // Asignar el rol al usuario
         $user->assignRole($role);
-    
+
         // Recuperar los permisos asociados al rol y asignarlos al usuario
         $permissions = $role->permissions;
         
         $user->givePermissionTo($permissions);
-    
+
         // Redirigir al usuario a la página de índice de usuarios
         return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
     }

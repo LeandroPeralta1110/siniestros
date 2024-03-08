@@ -1,16 +1,21 @@
 <div>
     <h1 class="title">IVESS - Formulario Cambio de Precios</h1>
 
-    <!-- Campo de carga de archivo -->
-    <div>
-        <input type="file" wire:model="excelFile">
+    <!-- Campo de carga de archivo y botón -->
+    <div style="display: flex; align-items: center;">
+        <!-- Campo de carga de archivo -->
+        <div style="flex: 1; max-width: 30%;">
+            <input type="file" wire:model="excelFile">
+            <span wire:loading wire:target="excelFile" class="cargando-icono-blue" role="status" aria-hidden="true"></span>
+        </div>
+        
+        <!-- Botón de envío -->
+        <div>
+            <button wire:click="procesarArchivoExcel" class="btn btn-primary">Procesar Archivo</button>
+            <span wire:loading wire:target="procesarArchivoExcel" class="cargando-icono-blue" role="status" aria-hidden="true"></span>
+        </div>
     </div>
     <br>
-
-    <!-- Botón de envío -->
-    <button wire:click="procesarArchivoExcel" class="btn btn-primary">Procesar Archivo</button>
-
-    <br><br>
 
     @if($successMessage)
     <div class="alert alert-success" role="alert">
@@ -47,6 +52,7 @@
 
     <div>
         <button wire:click="restaurarPreciosALL" class="btn btn-primary">Restaurar todos</button>
+        <span wire:loading wire:target="restaurarPreciosALL" class="cargando-icono-blue" role="status" aria-hidden="true"></span>
     </div>
 
     @if($productos)
@@ -57,7 +63,7 @@
                 <th>Descripción</th>
                 @foreach($productos as $producto)
                     @if(isset($producto['idListaPrecio']))
-                        <th>ID Lista de Precios</th>
+                        <th>Lista del Producto</th>
                         @break
                     @endif
                 @endforeach
@@ -71,8 +77,8 @@
                 <tr>
                     <td>{{ $producto['idProducto'] }}</td>
                     <td>{{ $producto['Descripcion'] }}</td>
-                    @if(isset($producto['idListaPrecio']))
-                        <td>{{ $producto['idListaPrecio'] }}</td>
+                    @if(isset($producto['descripcionLista']))
+                        <td>{{ $producto['descripcionLista'] }}</td>
                     @endif
                     @if(!empty($producto['PrecioLocal']))
                         <td>
