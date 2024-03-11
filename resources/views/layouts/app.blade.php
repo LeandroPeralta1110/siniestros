@@ -50,15 +50,15 @@
         <div class="main-sidebar sidebar-style-2 shadow-lg">
             <aside id="sidebar-wrapper">
                 <div class="sidebar-brand">
-        <a href="index.html" style="line-height: 1;">IVESS <br><span style="line-height: 1;">formulario</span></a>
-    </div>
+                    <a href="{{ route('dashboard') }}" style="line-height: 1;">IVESS <br><span style="line-height: 1;">formulario</span></a>
+                </div>
                 <div class="sidebar-brand sidebar-brand-sm">
-                    <a href="index.html">IVS</a>
+                    <a href="{{ route('dashboard') }}">IVS</a>
                 </div>
                 <ul class="sidebar-menu">
                     @can('crear-formularios')
                     <li class="menu-header">Dashboard</li>
-                    <li class="dropdown active">
+                    <li class="dropdown {{ request()->routeIs('dashboard') || request()->routeIs('form.siniestros') ? 'active' : '' }}">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                         <ul class="dropdown-menu">
                             <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -70,7 +70,7 @@
                         </ul>
                     </li>
                     @endcan
-                    <li class="dropdown active">
+                    <li class="dropdown {{ request()->routeIs('registro.precio') || request()->routeIs('form.precio') ? 'active' : '' }}">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Cambio de Precios</span></a>
                         <ul class="dropdown-menu">
                             @can('registrar-productos')

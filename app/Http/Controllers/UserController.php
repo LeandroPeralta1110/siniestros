@@ -95,25 +95,27 @@ class UserController extends Controller
     return view('users.edit', compact('user'));
 }
 
-    public function update(Request $request, User $user)
-    {
-        // Validar los datos del formulario
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
-            'password' => 'nullable|string|min:8', // La contraseña es opcional
-        ]);
+public function update(Request $request, User $user)
+{
+    // Validar los datos del formulario
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+        'password' => 'nullable|string|min:8', // La contraseña es opcional
+        'legajo' => 'required|string|max:255', // Agrega validación para el legajo
+    ]);
 
-        // Actualizar los datos del usuario
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password ? bcrypt($request->password) : $user->password,
-        ]);
+    // Actualizar los datos del usuario
+    $user->update([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => $request->password ? bcrypt($request->password) : $user->password,
+        'legajo' => $request->legajo, // Actualiza el legajo
+    ]);
 
-        // Redirigir al usuario a la página de índice de usuarios
-        return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente.');
-    }
+    // Redirigir al usuario a la página de índice de usuarios
+    return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente.');
+}
 
      /**
      * Remove the specified resource from storage.
