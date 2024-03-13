@@ -18,13 +18,13 @@ class FormSiniestrosController extends Component
         $user = Auth::user();
         $nombreUsuario = $user->name;
         $legajoAuth = $user->legajo;
-
-        // Capturar los datos del formulario
-        $datos = $request->except(['imagen1', 'imagen2', 'daños1', 'daños2']); // Excluir las imágenes de los datos
        
+        // Capturar los datos del formulario
+        $datos = $request->except(['imagen1', 'imagen2', 'daños1', 'daños2','registroFrente','registroDorso','dañosTercero1','dañosTercero2']); // Excluir las imágenes de los datos
+
         // Procesar y guardar las imágenes
         $imagenes = [];
-        foreach(['imagen1', 'imagen2', 'daños1', 'daños2'] as $imagenKey) {
+        foreach(['imagen1', 'imagen2', 'daños1', 'daños2','registroFrente','registroDorso','dañosTercero1','dañosTercero2'] as $imagenKey) {
             if($request->hasFile($imagenKey)) {
                 $imagen = $request->file($imagenKey);
                 $nombreImagen = $imagen->hashName(); // Obtener un nombre único para la imagen

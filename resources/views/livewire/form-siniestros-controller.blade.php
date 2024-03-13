@@ -1,20 +1,20 @@
 <div>
     <h1>IVESS - Formulario de Denuncia de Siniestro</h1>
-    <div class="container-form">
+    <div class="">
         <div class="grid-container">
             <div class="resizable-grid">
                 <div class="tab">
-                    <button class="tablinks" onclick="openTab(event, 'Empresa_/_Sucursal')">Empresa / Sucursal</button>
-                    <button class="tablinks" onclick="openTab(event, 'Vehículo')">Vehículo</button>
-                    <button class="tablinks" onclick="openTab(event, 'Lugar_del_Siniestro')">Lugar del Siniestro</button>
-                    <button class="tablinks" onclick="openTab(event, 'Descripcion_siniestro')">Descripcion del Siniestro</button>
-                    <button class="tablinks" onclick="openTab(event, 'datos_del_tercero')">Datos personales del tercero</button>
+                    <button class="tablinks" data-tab="Empresa_/_Sucursal" onclick="openTab(event, 'Empresa_/_Sucursal')">Empresa / Sucursal</button>
+                    <button class="tablinks" data-tab="Vehículo" onclick="openTab(event, 'Vehículo')" style="display: none;">Vehículo</button>
+                    <button class="tablinks" data-tab="Lugar_del_Siniestro" onclick="openTab(event, 'Lugar_del_Siniestro')" style="display: none;">Lugar del Siniestro</button>
+                    <button class="tablinks" data-tab="Descripcion_siniestro" onclick="openTab(event, 'Descripcion_siniestro')" style="display: none;">Descripción del Siniestro</button>
+                    <button class="tablinks" data-tab="datos_del_tercero" onclick="openTab(event, 'datos_del_tercero')" style="display: none;">Datos personales del tercero</button>
                 </div>
             </div>
             <div class="second-grid">
                 <form id="formulario" action="{{ route('submit.form') }}" method="POST" enctype="multipart/form-data" target="_blank">
                     @csrf
-                    <div id="Empresa_/_Sucursal" class="tabcontent">
+                    <div id="Empresa_/_Sucursal" class="tabcontent section">
                         <h2>Empresa / Sucursal</h2>
                         <label for="Hora_y_dia_de_la_Creacion_del_Formulario_Siniestro">Hora y día del Siniestro:</label><br>
                         <input type="datetime-local" id="Hora_y_dia_de_la_Creacion_del_Formulario_Siniestro" name="Hora_y_dia_de_la_Creacion_del_Formulario_Siniestro" required><br>
@@ -54,10 +54,35 @@
                                 <input name="imagen2" id="imagen2" type='file' class="hidden" required/>
                             </label>
                         </div>
+                        <label class="mt-8">Imagenes Registro de conducir del Chofer</label>
+                        <div class="grid grid-cols-1 mt-5 mx-7">
+                            <img id="registroFrenteImg" style="max-height: 300px;">           
+                        </div>
+                        <div class='flex items-center justify-center w-full'>
+                            <label class='flex flex-col border-4 border-dashed w-full h-32 hover:bg-gray-100 hover:border-purple-300 group'>
+                                <div class='flex flex-col items-center justify-center pt-7'>
+                                    <svg class="w-10 h-10 text-purple-400 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <p class='text-sm text-gray-400 group-hover:text-purple-600 pt-1 tracking-wider'>Seleccione REGISTRO FRENTE</p>
+                                </div>
+                                <input name="registroFrente" id="registroFrente" type='file' class="hidden" required />
+                            </label>
+                        </div>
+                        <div class="grid grid-cols-1 mt-5 mx-7">
+                            <img id="registroDorsoImg" style="max-height: 300px;">           
+                        </div>
+                        <div class='flex items-center justify-center w-full'>
+                            <label class='flex flex-col border-4 border-dashed w-full h-32 hover:bg-gray-100 hover:border-purple-300 group'>
+                                <div class='flex flex-col items-center justify-center pt-7'>
+                                    <svg class="w-10 h-10 text-purple-400 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <p class='text-sm text-gray-400 group-hover:text-purple-600 pt-1 tracking-wider'>Seleccione REGISTRO DORSO</p>
+                                </div>
+                                <input name="registroDorso" id="registroDorso" type='file' class="hidden" required/>
+                            </label>
+                        </div>
                     </div>
                     
                     <!-- Campos de Vehículo -->
-                    <div id="Vehículo" class="tabcontent">
+                    <div id="Vehículo"  class="tabcontent section">>
                         <h2>Vehículo</h2>
                         <label for="patente-vehiculo">Patente del vehículo:</label><br>
                         <input type="text" id="patente-vehiculo" name="patente-vehiculo" placeholder="Ingrese patente del vehiculo" required><br>
@@ -96,7 +121,7 @@
                         </div>
                     </div>
 
-                    <div id="Lugar_del_Siniestro" class="tabcontent">
+                    <div id="Lugar_del_Siniestro"  class="tabcontent section">>
                         <h2>Lugar del Siniestro</h2>
                         <label for="localidad_sini">Localidad del Siniestro:</label><br>
                         <input type="text" id="localidad_sini" name="localidad_sini" placeholder="Ingrese localidad del siniestro" required><br>
@@ -113,7 +138,7 @@
                         </select><br>
                     </div>
 
-                    <div id="Descripcion_siniestro" class="tabcontent">
+                    <div id="Descripcion_siniestro"  class="tabcontent section">>
                         <h2>Descripcion del Siniestro</h2>
                         <label for="nombre-tercero">Nombre y apellido del tercero:</label><br>
                         <input type="text" id="nombre-tercero" name="nombre-tercero" placeholder="Ingrese nombre y apellido del tercero" required><br>
@@ -128,21 +153,17 @@
                             <option value="Motocicleta">Motocicleta</option>
                             <option value="Otro">Otro</option>
                         </select><br>
-                        <label for="pos-registro"class="mt-4">Poseia registro de conducir:</label><br>
-                        <select id="pos-registro" name="pos-registro" required>
-                            <option value="Si">Si</option>
-                            <option value="No">No</option>
-                        </select><br>
+                        <label for="registroTercero">NºRegistro de conducir del Tercero:</label><br>
+                        <input type="text" id="registroTercero" name="registroTercero" placeholder="Ingrese numero de registro" required><br>
+
                         <label for="pos-documentacion"class="mt-4">Poseia documentacion del vehiculo:</label><br>
                         <select id="pos-documentacion" name="pos-documentacion" required>
                             <option value="Si">Si</option>
                             <option value="No">No</option>
                         </select><br>
-                        <label for="pos-poliza" class="mt-4">Poseía póliza:</label><br>
-                        <select id="pos-poliza" name="pos-poliza" required>
-                            <option value="Si">Si</option>
-                            <option value="No">No</option>
-                        </select><br>
+
+                        <label for="polizaTercero">Nº de Poliza:</label><br>
+                        <input type="text" id="polizaTercero" name="polizaTercero" placeholder="Ingrese numero de Poliza" required><br>
                         <!-- Segundo select (inicialmente oculto) -->
                         <div id="poliza-tipo">
                             <label for="pos-poliza-tipo" class="mt-4">Qué tipo de póliza:</label><br>
@@ -200,9 +221,6 @@
                             <option value="No">No</option>
                         </select><br>
 
-                        <label for="por-daños"class="mt-4">Porcentaje del daño del vehiculo del tercero:</label><br>
-                        <input type="text" id="por-daños" name="por-daños" value="%">
-
                         <label for="tip-choque"class="mt-4">Tipo de choque:</label><br>
                         <select id="tip-choque" name="tip-choque" required>
                             <option value="frontal">Frontal</option>
@@ -210,20 +228,40 @@
                             <option value="lateral">Lateral</option>
                             <option value="superior">Superior</option>
                         </select><br>
+
+                        <label for="daños-vehiculo-tercero"class="mt-4">Descripcion de los daños del vehiculo del Tercero:</label><br>
+                        <input type="text" id="daños-vehiculo-tercero" name="daños-vehiculo-tercero" placeholder="Ingrese daños del vehiculo" required><br>
                         
-                        <label for="desc-daños"class="mt-4">Descripcion de los daños:</label><br>
-                        <input type="text" id="desc-daños" name="desc-daños" placeholder="Ingrese descripcion de los daños" required><br>
+                        <div class="grid grid-cols-1 mt-5 mx-7">
+                            <img id="dañosVehiculoImg1" style="max-height: 300px;">           
+                        </div>
+                        <div class='flex items-center justify-center w-full'>
+                            <label class='flex flex-col border-4 border-dashed w-full h-32 hover:bg-gray-100 hover:border-purple-300 group'>
+                                <div class='flex flex-col items-center justify-center pt-7'>
+                                    <svg class="w-10 h-10 text-purple-400 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <p class='text-sm text-gray-400 group-hover:text-purple-600 pt-1 tracking-wider'>Seleccione DAÑO 1</p>
+                                </div>
+                                <input name="dañosTercero1" id="dañosTercero1" type='file' class="hidden" required/>
+                            </label>
+                        </div>
+                        <div class="grid grid-cols-1 mt-5 mx-7">
+                            <img id="dañosVehiculoImg2" style="max-height: 300px;">           
+                        </div>
+                        <div class='flex items-center justify-center w-full'>
+                            <label class='flex flex-col border-4 border-dashed w-full h-32 hover:bg-gray-100 hover:border-purple-300 group'>
+                                <div class='flex flex-col items-center justify-center pt-7'>
+                                    <svg class="w-10 h-10 text-purple-400 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <p class='text-sm text-gray-400 group-hover:text-purple-600 pt-1 tracking-wider'>Seleccione DAÑO 2</p>
+                                </div>
+                                <input name="dañosTercero2" id="dañosTercero2" type='file' class="hidden" required />
+                            </label>
+                        </div>
                     </div>
 
-                    <div id="datos_del_tercero" class="tabcontent">
+                    <div id="datos_del_tercero"  class="tabcontent section">>
                         <h2>Datos personales del Tercero</h2>
                         <label for="dni-tercero">DNI del tercero:</label><br>
                         <input type="text" id="dni-tercero" name="dni-tercero" placeholder="Ingrese DNI del tercero" required><br>
-                        <label for="gen-tercero"class="mt-4">Genero del tercero:</label><br>
-                        <select id="gen-tercero" name="gen-tercero" required>
-                            <option value="hombre">Hombre</option>
-                            <option value="mujer">Mujer</option>
-                        </select><br>
 
                         <label for="patente-tercero"class="mt-4">Patente del vehiculo del tercero:</label><br>
                         <input type="text" id="patente-tercero" name="patente-tercero" placeholder="Ingrese patente del vehiculo del tercero" required><br>
@@ -250,9 +288,28 @@
             </div>
         </div>
         </div>
+    </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         $(document).ready(function (e) {   
+            $(".tabcontent").each(function (index) {
+            $(this).find(":input[required]").change(function () {
+                var section = $(this).closest(".section");
+                var allInputsFilled = true;
+                section.find(":input[required]").each(function () {
+                    if (!$(this).val()) {
+                        allInputsFilled = false;
+                        return false; // Break out of the loop
+                    }
+                });
+                if (allInputsFilled) {
+                    section.data("filled", true);
+                } else {
+                    section.data("filled", false);
+                }
+            });
+        });
+
             $('#imagen1').change(function(){            
                 let reader = new FileReader();
                 reader.onload = (e) => { 
@@ -281,6 +338,38 @@
                 let reader = new FileReader();
                 reader.onload = (e) => { 
                     $('#selecDaños2').attr('src', e.target.result); 
+                }
+                reader.readAsDataURL(this.files[0]); 
+            });
+
+            $('#registroFrente').change(function(){            
+                let reader = new FileReader();
+                reader.onload = (e) => { 
+                    $('#registroFrenteImg').attr('src', e.target.result); 
+                }
+                reader.readAsDataURL(this.files[0]); 
+            });
+
+            $('#registroDorso').change(function(){            
+                let reader = new FileReader();
+                reader.onload = (e) => { 
+                    $('#registroDorsoImg').attr('src', e.target.result); 
+                }
+                reader.readAsDataURL(this.files[0]); 
+            });
+
+            $('#dañosTercero1').change(function(){            
+                let reader = new FileReader();
+                reader.onload = (e) => { 
+                    $('#dañosVehiculoImg1').attr('src', e.target.result); 
+                }
+                reader.readAsDataURL(this.files[0]); 
+            });
+
+            $('#dañosTercero2').change(function(){            
+                let reader = new FileReader();
+                reader.onload = (e) => { 
+                    $('#dañosVehiculoImg2').attr('src', e.target.result); 
                 }
                 reader.readAsDataURL(this.files[0]); 
             });
@@ -332,18 +421,25 @@
 
         });
     </script>
-    <script>
-function openTab(evt, tabName) {
-var i, tabcontent, tablinks;
-tabcontent = document.getElementsByClassName("tabcontent");
-for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
+  <script>
+    function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active"; // Agrega la clase "active" al botón seleccionado
+
+    // Mostrar el siguiente botón de pestaña
+    var nextTab = evt.currentTarget.nextElementSibling;
+    if (nextTab) {
+        nextTab.style.display = "inline-block";
+    }
 }
-tablinks = document.getElementsByClassName("tablinks");
-for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-}
-document.getElementById(tabName).style.display = "block";
-evt.currentTarget.className += " active"; // Agrega la clase "active" al botón seleccionado
-}
+
 </script>

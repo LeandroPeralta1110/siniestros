@@ -70,7 +70,9 @@
         </tr>
         <tr>
             <td>Hora y día de la Creación del Formulario/Siniestro</td>
-            <td class="align-right">{{ $datos['Hora_y_dia_de_la_Creacion_del_Formulario_Siniestro'] }}</td>
+            <td class="align-right">
+                {{ \Carbon\Carbon::parse($datos['Hora_y_dia_de_la_Creacion_del_Formulario_Siniestro'])->format('d/m/Y H:i') }}
+            </td>
         </tr>
         <tr>
             <td>Creado por</td>
@@ -122,6 +124,22 @@
                 @endif
             </td>
         </tr>
+        <tr>
+            <td>Registro de conducir Frente</td>
+            <td class="align-right">
+                @if (isset($imagenes['registroFrente']))
+                    <img src="{{ $imagenes['registroFrente'] }}" class="imagen" alt="registro Frente" style="width: 100%;" >
+                @endif
+            </td>
+        </tr>
+        <tr>
+            <td>Registro de Conducir Dorso</td>
+            <td class="align-right">
+                @if (isset($imagenes['registroDorso']))
+                    <img src="{{ $imagenes['registroDorso'] }}" class="imagen" alt="registro Dorso" style="width: 100%;" >
+                @endif
+            </td>
+        </tr>
     </table>
 
     <!-- Tabla Datos extra del chofer -->
@@ -139,6 +157,8 @@
     </tr>
 </table>
 
+<div class="nueva-pagina"></div>
+
 <!-- Tabla Datos del Vehiculo del Chofer -->
 <table>
     <tr>
@@ -155,6 +175,22 @@
     <tr>
         <td>Daños del Vehiculo</td>
         <td class="align-right">{{ $datos['daños-vehiculo'] }}</td>
+    </tr>
+    <tr>
+        <td>Imagen daño 1</td>
+        <td class="align-right">
+            @if (isset($imagenes['daños1']))
+                <img src="{{ $imagenes['daños1'] }}" class="imagen" alt="daños 1" style="width: 100%;" >
+            @endif
+        </td>
+    </tr>
+    <tr>
+        <td>Imagen daño 2</td>
+        <td class="align-right">
+            @if (isset($imagenes['daños2']))
+                <img src="{{ $imagenes['daños2'] }}" class="imagen" alt="daños 2" style="width: 100%;" >
+            @endif
+        </td>
     </tr>
 </table>
 
@@ -181,6 +217,7 @@
     </tr>
 </table>
 
+<div class="nueva-pagina"></div>
 <!-- Tabla Datos del Tercero -->
 <table>
     <tr>
@@ -193,10 +230,6 @@
     <tr>
         <td>DNI del Tercero</td>
         <td class="align-right">{{ $datos['dni-tercero'] }}</td>
-    </tr>
-    <tr>
-        <td>Genero del Tercero</td>
-        <td class="align-right">{{ $datos['gen-tercero'] }}</td>
     </tr>
     <tr>
         <td>Tipo de Vehiculo del Tercero</td>
@@ -215,15 +248,15 @@
         <td class="align-right">{{ $datos['desc-vehiculo-tercero'] }}</td>
     </tr>
     <tr>
-        <td>Poseia Registro</td>
-        <td class="align-right">{{ $datos['pos-registro'] }}</td>
+        <td>Nº Registro</td>
+        <td class="align-right">{{ $datos['registroTercero'] }}</td>
     </tr>
     <tr>
-        <td>Poseia documento</td>
-        <td class="align-right">{{ $datos['pos-poliza'] }}</td>
+        <td>Nº Poliza</td>
+        <td class="align-right">{{ $datos['polizaTercero'] }}</td>
     </tr>
     <tr>
-        <td>Poseia poliza</td>
+        <td>Tipo de Poliza</td>
         <td class="align-right">{{ $datos['pos-poliza-tipo'] }}</td>
     </tr>
     <tr>
@@ -248,6 +281,50 @@
         <td class="align-right">{{ $datos['pos-desc-daños-acomp'] }}</td>
     </tr>
     @endif
+    <tr>
+        <td>Imagen 1 daño del vehiculo del tercero</td>
+        <td class="align-right">
+            @if (isset($imagenes['dañosTercero1']))
+                <img src="{{ $imagenes['dañosTercero1'] }}" class="imagen" alt="daños Tercero 1" style="width: 100%;" >
+            @endif
+        </td>
+    </tr>
+    <tr>
+        <td>Imagen 2 daño del vehiculo del tercero</td>
+        <td class="align-right">
+            @if (isset($imagenes['dañosTercero2']))
+                <img src="{{ $imagenes['dañosTercero2'] }}" class="imagen" alt="daños Tercero 2" style="width: 100%;" >
+            @endif
+        </td>
+    </tr>
+</table>
+
+<div class="nueva-pagina"></div>
+<table style="width: 100%;">
+    <tr>
+        <td class="align-right" style="width: 25%;">
+            @if (isset($imagenes['imagen1']))
+                <img src="{{ $imagenes['imagen1'] }}" class="imagen" alt="DNI Frente" style="max-width: 100%; max-height: 100%;">
+            @endif
+        </td>
+        <td class="align-right" style="width: 25%;">
+            @if (isset($imagenes['imagen2']))
+                <img src="{{ $imagenes['imagen2'] }}" class="imagen" alt="DNI Dorso" style="max-width: 100%; max-height: 100%;">
+            @endif
+        </td>
+    </tr>
+    <tr>
+        <td class="align-right" style="width: 25%;">
+            @if (isset($imagenes['registroFrente']))
+                <img src="{{ $imagenes['registroFrente'] }}" class="imagen" alt="registro Frente" style="max-width: 100%; max-height: 100%;">
+            @endif
+        </td>
+        <td class="align-right" style="width: 25%;">
+            @if (isset($imagenes['registroDorso']))
+                <img src="{{ $imagenes['registroDorso'] }}" class="imagen" alt="registro Dorso" style="max-width: 100%; max-height: 100%;">
+            @endif
+        </td>
+    </tr>
 </table>
 
     <!-- Continúa agregando más tablas o datos según sea necesario -->
