@@ -282,6 +282,10 @@
     </tr>
     @endif
     <tr>
+        <td>Descripcion de los daños del Vehiculo del Tercero</td>
+        <td class="align-right">{{ $datos['daños-vehiculo-tercero'] }}</td>
+    </tr>
+    <tr>
         <td>Imagen 1 daño del vehiculo del tercero</td>
         <td class="align-right">
             @if (isset($imagenes['dañosTercero1']))

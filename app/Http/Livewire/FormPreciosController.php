@@ -141,18 +141,8 @@ class FormPreciosController extends Component
        /*   dd($this->productos); */
     }
 
-    public function actualizarPrecioLocal(Request $request)
+    public function actualizarPrecioLocal($idProducto, $nuevoPrecio, $idListaPrecio, $precioOriginal)
     {
-        // Obtener los datos de la solicitud
-        $idProducto = $request->idProducto;
-        $nuevoPrecio = $request->nuevoPrecio;
-        $idListaPrecio = $request->idListaPrecio;
-        
-        // Obtener el precio original del producto
-        $precioOriginal = Precio::where('IdProducto', $idProducto)
-                            ->where('IdListaPrecio', $idListaPrecio)
-                            ->value('Precio');
-    
         // Actualizar el precio local en la base de datos
         $precioLocal = Precio::where('IdProducto', $idProducto)
                             ->where('IdListaPrecio', $idListaPrecio)
@@ -161,17 +151,9 @@ class FormPreciosController extends Component
         if ($precioLocal) {
             $precioLocal->Precio = $nuevoPrecio;
             $precioLocal->save();
-            
+            $this->actualizarSeleccion();
         }
     
-        // Comprobar si el nuevo precio difiere del precio original
-        $precioDifiere = ($nuevoPrecio != $precioOriginal);
-    
-        // Devolver una respuesta con la información necesaria
-        return response()->json([
-            'message' => 'Datos actualizados correctamente.',
-            'precioDifiere' => $precioDifiere
-        ]);
     }
     
     public function restaurarPrecio($idProducto, $idListaPrecio)

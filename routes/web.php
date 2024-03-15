@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Livewire\FormPreciosController;
 use App\Http\Livewire\FormSiniestrosController as LivewireFormSiniestrosController;
 use App\Http\Livewire\RegistrarPrecios;
+use App\Http\Livewire\RegistroSiniestros;
 use App\Livewire\FormCambioPrecioController;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\FormController;
@@ -42,6 +43,9 @@ Route::middleware([
         Route::get('/form', LivewireFormSiniestrosController::class)->name('form.siniestros');
         Route::post('/submit', [LivewireFormSiniestrosController::class, 'submitForm'])->name('submit.form');
     });
+
+    Route::get('/registro-siniestros', RegistroSiniestros::class)->name('registro.siniestros');
+    Route::get('/siniestro/pdf/{id}', [RegistroSiniestros::class, 'showPdf'])->name('siniestro.pdf');
 
     Route::middleware(['can:editar-form-productos'])->group(function () {
         route::get('form-precio', FormPreciosController::class)->name('form.precio');

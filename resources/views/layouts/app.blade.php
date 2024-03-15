@@ -56,20 +56,15 @@
                     <a href="{{ route('dashboard') }}">IVS</a>
                 </div>
                 <ul class="sidebar-menu">
-                    @can('crear-formularios')
                     <li class="menu-header">Dashboard</li>
-                    <li class="dropdown {{ request()->routeIs('dashboard') || request()->routeIs('form.siniestros') ? 'active' : '' }}">
+                    <li class="dropdown {{ request()->routeIs('dashboard')  }}">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                         <ul class="dropdown-menu">
                             <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('dashboard') }}">General Dashboard</a>
                             </li>
-                            <li class="{{ request()->routeIs('form.siniestros') ? 'active' : '' }}">
-                                <a class="nav-link" href="{{ route('form.siniestros') }}">Formulario de Siniestros</a>
-                            </li>
                         </ul>
                     </li>
-                    @endcan
                     <li class="dropdown {{ request()->routeIs('registro.precio') || request()->routeIs('form.precio') ? 'active' : '' }}">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Cambio de Precios</span></a>
                         <ul class="dropdown-menu">
@@ -85,6 +80,19 @@
                             @endcan
                         </ul>
                     </li>
+                    @can('crear-formularios')
+                        <li class="dropdown {{ request()->routeIs('form.siniestros') || request()->routeIs('registro.siniestros') ? 'active' : '' }}">
+                            <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Siniestros</span></a>
+                            <ul class="dropdown-menu">
+                                <li class="{{ request()->routeIs('form.siniestros') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('form.siniestros') }}">Formulario de Siniestros</a>
+                                </li>
+                                <li class="{{ request()->routeIs('registro.siniestros') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('registro.siniestros')}}">Registros de Siniestros</a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endcan
                 </ul>
                 <div class="mt-4 mb-4 p-3 hide-sidebar-mini">
                 </div>

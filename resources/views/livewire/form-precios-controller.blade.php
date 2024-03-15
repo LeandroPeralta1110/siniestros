@@ -82,14 +82,19 @@
                     @endif
                     @if(!empty($producto['PrecioLocal']))
                         <td>
-                            <!-- Utiliza Livewire para manejar el evento onchange -->
-                            <input type="text" id="precioInput{{ $producto['idProducto'] }}" value="{{ $producto['PrecioLocal'] }}" data-id-lista-precio="{{ $producto['idListaPrecio'] }}" onchange="actualizarPrecioLocal('{{ $producto['idProducto'] }}', this)">                    
+                            <!-- Utiliza Livewire para manejar el evento wire:change -->
+                            <input type="text" 
+                                   id="precioInput{{ $producto['idProducto'] }}" 
+                                   value="{{ $producto['PrecioLocal'] }}" 
+                                   data-id-lista-precio="{{ $producto['idListaPrecio'] }}" 
+                                   data-precio-original="{{ $producto['PrecioSQL'] }}"
+                                   wire:change="actualizarPrecioLocal('{{ $producto['idProducto'] }}', $event.target.value, '{{ $producto['idListaPrecio'] }}', '{{ $producto['PrecioSQL'] }}')">
                         </td>
                     @endif
                     <td>{{ $producto['PrecioSQL'] ?? '-' }}</td>
                     <td>
                         @if($producto['PrecioLocal'] != $producto['PrecioSQL'])
-                        <button wire:click="restaurarPrecio('{{ $producto['idProducto'] }}', '{{ $producto['idListaPrecio'] }}')" class="btn btn-warning">Restaurar</button>
+                            <button wire:click="restaurarPrecio('{{ $producto['idProducto'] }}', '{{ $producto['idListaPrecio'] }}')" class="btn btn-warning">Restaurar</button>
                         @endif
                     </td>
                 </tr>

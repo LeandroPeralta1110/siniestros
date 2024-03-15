@@ -107,11 +107,11 @@ button:hover {
 
 .resizable-grid {
     overflow: auto;
-    resize: both;
+    resize: horizontal; /* Solo se puede redimensionar horizontalmente */
     border: 1px solid #ccc;
     padding: 10px;
     width: 250px; /* Ancho inicial */
-    height: 100%; /* Ocupará toda la altura del contenedor */
+    height: 450px; /* Altura fija */
 }
 
 .second-grid {
