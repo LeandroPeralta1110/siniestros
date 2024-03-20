@@ -346,7 +346,7 @@ public function procesarArchivoExcel()
                 ];
             }
         }
-       
+        /* dd($datos); */
             // Recorrer los datos procesados del Excel
             foreach ($datos as $dato) {
                 $idListaPrecio = $dato['idListaPrecio'];

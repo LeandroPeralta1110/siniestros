@@ -81,11 +81,14 @@ class FormSiniestrosController extends Component
         $siniestro->registroDorso_path = $imagenes['registroDorso'] ?? null;
         $siniestro->dañosTercero1_path = $imagenes['dañosTercero1'] ?? null;
         $siniestro->dañosTercero2_path = $imagenes['dañosTercero2'] ?? null;
+        $siniestro->fechaHoraSiniestro = $request->input('Hora_y_dia_de_la_Creacion_del_Formulario_Siniestro');
         $siniestro->save();
 
+        // Obtiene el ID del siniestro recién creado
+        $siniestroId = $siniestro->id;
 
-        // Generar el PDF
-        $pdf = $this->generatePdf($nombreUsuario, $legajoAuth, $datos, $imagenes);
+        // Genera el PDF utilizando el ID del siniestro
+        $pdf = $this->generatePdf($siniestroId, $nombreUsuario, $legajoAuth, $datos, $imagenes);
 
         // Descargar el PDF
         return Response::make($pdf, 200, [
@@ -94,16 +97,15 @@ class FormSiniestrosController extends Component
         ]);
     }
 
-    // Método para generar el PDF
-    private function generatePdf($nombreUsuario, $legajoAuth, $datos, $imagenes)
+    private function generatePdf($siniestroId, $nombreUsuario, $legajoAuth, $datos, $imagenes)
     {
         // Crear una instancia de Dompdf
         $options = new Options();
         $options->set('isRemoteEnabled', true);
         $dompdf = new Dompdf($options);
-      
+    
         // Renderizar el HTML del PDF
-        $html = view('form.pdf', compact('nombreUsuario', 'legajoAuth', 'datos', 'imagenes'))->render();
+        $html = view('form.pdf', compact('nombreUsuario', 'legajoAuth', 'datos', 'imagenes', 'siniestroId'))->render();
         $dompdf->loadHtml($html);
 
         // Renderizar el PDF
@@ -112,9 +114,13 @@ class FormSiniestrosController extends Component
         // Obtener el contenido del PDF
         $output = $dompdf->output();
 
-        return $output;
+        // Guardar el PDF en la carpeta public/pdfs
+        $pdfPath = public_path('pdfs/siniestro_' . $siniestroId . '.pdf'); // Nombre del archivo con el ID del siniestro
+        file_put_contents($pdfPath, $output);
+
+        return $output; // Retorna la ruta del PDF guardado
     }
-    
+
     public function render()
     {
         return view('livewire.form-siniestros-controller');

@@ -59,6 +59,7 @@ return new class extends Migration
             $table->string('daños2_path')->nullable();
             $table->string('dañosTercero1_path')->nullable();
             $table->string('dañosTercero2_path')->nullable();
+            $table->timestamp('fechaHoraSiniestro');
             $table->timestamps();
         });
     }

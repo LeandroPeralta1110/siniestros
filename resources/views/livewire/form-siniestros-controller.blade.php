@@ -307,9 +307,25 @@
                 } else {
                     section.data("filled", false);
                 }
+                updateButtonColor(section); // Llamar a la función para actualizar el color del botón
             });
         });
 
+        function updateButtonColor(section) {
+            var tablink = $('[data-tab="' + section.attr('id') + '"]');
+            if (section.data('filled')) {
+                tablink.addClass('filled'); // Agregar clase 'filled' al botón
+            } else {
+                tablink.removeClass('filled'); // Quitar clase 'filled' del botón
+            }
+        }
+
+        // Función para cambiar a la pestaña correspondiente cuando se hace clic en el botón
+        $('.tablinks').click(function(e) {
+            e.preventDefault();
+            var tabId = $(this).attr('data-tab');
+            openTab(null, tabId);
+        });
             $('#imagen1').change(function(){            
                 let reader = new FileReader();
                 reader.onload = (e) => { 

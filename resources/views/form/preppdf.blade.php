@@ -61,7 +61,7 @@
     <!-- Logo en la esquina superior izquierda -->
     <img src="{{asset('images/editable logo azul oscuro y claro.png')}}" alt="" class="logo">
 
-    <h1>Formulario de Siniestro #{{$siniestroId}}</h1>
+    <h1>Formulario de Siniestro</h1>
 
     <!-- Primera tabla -->
     <table>
@@ -71,20 +71,20 @@
         <tr>
             <td>Hora y día de la Creación del Formulario/Siniestro</td>
             <td class="align-right">
-                {{ \Carbon\Carbon::parse($datos['Hora_y_dia_de_la_Creacion_del_Formulario_Siniestro'])->format('d/m/Y H:i') }}
+                {{ \Carbon\Carbon::parse($siniestro->fechaHoraSiniestro)->format('d/m/Y H:i') }}
             </td>
         </tr>
         <tr>
             <td>Creado por</td>
-            <td class="align-right">{{ $nombreUsuario }}</td>
+            <td class="align-right">{{ $siniestro->user->name }}</td>
         </tr>
         <tr>
             <td>Legajo</td>
-            <td class="align-right">{{ $legajoAuth }}</td>
+            <td class="align-right">{{ $siniestro->user->legajo }}</td>
         </tr>
         <tr>
             <td>Lugar del Siniestro</td>
-            <td class="align-right">{{ $datos['localidad_sini'] }}</td>
+            <td class="align-right">{{ $siniestro->localidad_sini }}</td>
         </tr>
     </table>
 
@@ -98,45 +98,45 @@
         </tr>
         <tr>
             <td>Nombre y Apellido del Chofer</td>
-            <td class="align-right">{{ $datos['nombreApellidoChofer'] }}</td>
+            <td class="align-right">{{ $siniestro->nombreApellidoChofer }}</td>
         </tr>
         <tr>
             <td>DNI del Chofer</td>
-            <td class="align-right">{{ $datos['DNIchofer'] }}</td>
+            <td class="align-right">{{ $siniestro->DNIchofer }}</td>
         </tr>
         <tr>
             <td>Legajo</td>
-            <td class="align-right">{{ $datos['legajoChofer'] }}</td>
+            <td class="align-right">{{ $siniestro->legajoChofer }}</td>
         </tr>
         <tr>
             <td>DNI Frente</td>
             <td class="align-right">
-                @if (isset($imagenes['imagen1']))
-                    <img src="{{ $imagenes['imagen1'] }}" class="imagen" alt="DNI Frente" style="width: 100%;" >
+                @if (isset($siniestro->imagen1_path))
+                    <img src="{{ $siniestro->imagen1_path }}" class="imagen" alt="DNI Frente" style="width: 100%;" >
                 @endif
             </td>
         </tr>
         <tr>
             <td>DNI Dorso</td>
             <td class="align-right">
-                @if (isset($imagenes['imagen2']))
-                    <img src="{{ $imagenes['imagen2'] }}" class="imagen" alt="DNI Dorso" style="width: 100%;" >
+                @if (isset($siniestro->imagen2_path))
+                    <img src="{{ $siniestro->imagen2_path }}" class="imagen" alt="DNI Dorso" style="width: 100%;" >
                 @endif
             </td>
         </tr>
         <tr>
             <td>Registro de conducir Frente</td>
             <td class="align-right">
-                @if (isset($imagenes['registroFrente']))
-                    <img src="{{ $imagenes['registroFrente'] }}" class="imagen" alt="registro Frente" style="width: 100%;" >
+                @if (isset($siniestro->registroFrente_path))
+                    <img src="{{ $siniestro->registroFrente_path }}" class="imagen" alt="registro Frente" style="width: 100%;" >
                 @endif
             </td>
         </tr>
         <tr>
             <td>Registro de Conducir Dorso</td>
             <td class="align-right">
-                @if (isset($imagenes['registroDorso']))
-                    <img src="{{ $imagenes['registroDorso'] }}" class="imagen" alt="registro Dorso" style="width: 100%;" >
+                @if (isset($siniestro->registroDorso_path))
+                    <img src="{{ $siniestro->registroDorso_path }}" class="imagen" alt="registro Dorso" style="width: 100%;" >
                 @endif
             </td>
         </tr>
@@ -149,11 +149,11 @@
     </tr>
     <tr>
         <td>Telefono</td>
-        <td class="align-right">{{ $datos['telChof'] }}</td>
+        <td class="align-right">{{ $siniestro->telChof }}</td>
     </tr>
     <tr>
         <td>Ayudante del chofer</td>
-        <td class="align-right">{{ $datos['nom_ape_ayudante'] }}</td>
+        <td class="align-right">{{ $siniestro->nom_ape_ayudante }}</td>
     </tr>
 </table>
 
@@ -166,29 +166,29 @@
     </tr>
     <tr>
         <td>Patente del vehiculo</td>
-        <td class="align-right">{{ $datos['patente-vehiculo'] }}</td>
+        <td class="align-right">{{ $siniestro->patente_vehiculo }}</td>
     </tr>
     <tr>
         <td>Interno del Vehiculo</td>
-        <td class="align-right">{{ $datos['interno-vehiculo'] }}</td>
+        <td class="align-right">{{ $siniestro->interno_vehiculo }}</td>
     </tr>
     <tr>
         <td>Daños del Vehiculo</td>
-        <td class="align-right">{{ $datos['daños-vehiculo'] }}</td>
+        <td class="align-right">{{ $siniestro->daños_vehiculo }}</td>
     </tr>
     <tr>
         <td>Imagen daño 1</td>
         <td class="align-right">
-            @if (isset($imagenes['daños1']))
-                <img src="{{ $imagenes['daños1'] }}" class="imagen" alt="daños 1" style="width: 100%;" >
+            @if (isset($siniestro->daños1_path))
+                <img src="{{ $siniestro->daños1_path }}" class="imagen" alt="daños 1" style="width: 100%;" >
             @endif
         </td>
     </tr>
     <tr>
         <td>Imagen daño 2</td>
         <td class="align-right">
-            @if (isset($imagenes['daños2']))
-                <img src="{{ $imagenes['daños2'] }}" class="imagen" alt="daños 2" style="width: 100%;" >
+            @if (isset($siniestro->daños2_path))
+                <img src="{{ $siniestro->daños2_path }}" class="imagen" alt="daños 2" style="width: 100%;" >
             @endif
         </td>
     </tr>
@@ -201,19 +201,19 @@
     </tr>
     <tr>
         <td>Localidad del siniestro</td>
-        <td class="align-right">{{ $datos['localidad_sini'] }}</td>
+        <td class="align-right">{{ $siniestro->localidad_sini }}</td>
     </tr>
     <tr>
         <td>Calle del siniestro</td>
-        <td class="align-right">{{ $datos['calle_sini'] }}</td>
+        <td class="align-right">{{ $siniestro->calle_sini }}</td>
     </tr>
     <tr>
         <td>Altura</td>
-        <td class="align-right">{{ $datos['altura_sini'] }}</td>
+        <td class="align-right">{{ $siniestro->altura_sini }}</td>
     </tr>
     <tr>
         <td>Entre calles</td>
-        <td class="align-right">{{ $datos['interseccion_sini'] }}</td>
+        <td class="align-right">{{ $siniestro->interseccion_sini }}</td>
     </tr>
 </table>
 
@@ -225,79 +225,79 @@
     </tr>
     <tr>
         <td>Nombre y Apellido del Tercero</td>
-        <td class="align-right">{{ $datos['nombre-tercero'] }}</td>
+        <td class="align-right">{{ $siniestro->nombre_tercero }}</td>
     </tr>
     <tr>
         <td>DNI del Tercero</td>
-        <td class="align-right">{{ $datos['dni-tercero'] }}</td>
+        <td class="align-right">{{ $siniestro->dni_tercero }}</td>
     </tr>
     <tr>
         <td>Tipo de Vehiculo del Tercero</td>
-        <td class="align-right">{{ $datos['vehiculo-tercero'] }}</td>
+        <td class="align-right">{{ $siniestro->vehiculo_tercero }}</td>
     </tr>
     <tr>
         <td>Patente</td>
-        <td class="align-right">{{ $datos['patente-tercero'] }}</td>
+        <td class="align-right">{{ $siniestro->patente_tercero }}</td>
     </tr>
     <tr>
         <td>Vehiculo Personal/Alquiler</td>
-        <td class="align-right">{{ $datos['vehiculo-tipo'] }}</td>
+        <td class="align-right">{{ $siniestro->vehiculo_tipo }}</td>
     </tr>
     <tr>
         <td>Descripcion del Vehiculo</td>
-        <td class="align-right">{{ $datos['desc-vehiculo-tercero'] }}</td>
+        <td class="align-right">{{ $siniestro->desc_vehiculo_tercero }}</td>
     </tr>
     <tr>
         <td>Nº Registro</td>
-        <td class="align-right">{{ $datos['registroTercero'] }}</td>
+        <td class="align-right">{{ $siniestro->registro_tercero }}</td>
     </tr>
     <tr>
         <td>Nº Poliza</td>
-        <td class="align-right">{{ $datos['polizaTercero'] }}</td>
+        <td class="align-right">{{ $siniestro->poliza_tercero }}</td>
     </tr>
     <tr>
         <td>Tipo de Poliza</td>
-        <td class="align-right">{{ $datos['pos-poliza-tipo'] }}</td>
+        <td class="align-right">{{ $siniestro->pos_poliza_tipo }}</td>
     </tr>
     <tr>
         <td>Poseia acompañantes</td>
-        <td class="align-right">{{ $datos['pos-acompañantes'] }}</td>
+        <td class="align-right">{{ $siniestro->pos_acompañantes }}</td>
     </tr>
-    @if($datos['pos-acompañantes'] == 'SI')
+    @if($siniestro->pos_acompañantes == 'SI')
     <tr>
         <td>Cantidad de Acompañantes</td>
-        <td class="align-right">{{ $datos['pos-cant-acomp'] }}</td>
+        <td class="align-right">{{ $siniestro->pos_cant_acompañantes }}</td>
     </tr>
     <tr>
         <td>Algun acompañante era menor</td>
-        <td class="align-right">{{ $datos['pos-menor-acomp'] }}</td>
+        <td class="align-right">{{ $siniestro->pos_menor_acomp }}</td>
     </tr>
     <tr>
         <td>Algun acompañante sufrio daños</td>
-        <td class="align-right">{{ $datos['pos-daños-acomp'] }}</td>
+        <td class="align-right">{{ $siniestro->pos_daños_acomp }}</td>
     </tr>
     <tr>
         <td>Descripcion de los daños de los acompañantes</td>
-        <td class="align-right">{{ $datos['pos-desc-daños-acomp'] }}</td>
+        <td class="align-right">{{ $siniestro->pos_desc_daños_acomp }}</td>
     </tr>
     @endif
     <tr>
         <td>Descripcion de los daños del Vehiculo del Tercero</td>
-        <td class="align-right">{{ $datos['daños-vehiculo-tercero'] }}</td>
+        <td class="align-right">{{ $siniestro->daños_vehiculo_tercero }}</td>
     </tr>
     <tr>
         <td>Imagen 1 daño del vehiculo del tercero</td>
         <td class="align-right">
-            @if (isset($imagenes['dañosTercero1']))
-                <img src="{{ $imagenes['dañosTercero1'] }}" class="imagen" alt="daños Tercero 1" style="width: 100%;" >
+            @if (isset($siniestro->dañosTercero1_path))
+                <img src="{{ $siniestro->dañosTercero1_path }}" class="imagen" alt="daños Tercero 1" style="width: 100%;" >
             @endif
         </td>
     </tr>
     <tr>
         <td>Imagen 2 daño del vehiculo del tercero</td>
         <td class="align-right">
-            @if (isset($imagenes['dañosTercero2']))
-                <img src="{{ $imagenes['dañosTercero2'] }}" class="imagen" alt="daños Tercero 2" style="width: 100%;" >
+            @if (isset($siniestro->dañosTercero2_path))
+                <img src="{{ $siniestro->dañosTercero2_path }}" class="imagen" alt="daños Tercero 2" style="width: 100%;" >
             @endif
         </td>
     </tr>
@@ -307,25 +307,25 @@
 <table style="width: 100%;">
     <tr>
         <td class="align-right" style="width: 25%;">
-            @if (isset($imagenes['imagen1']))
-                <img src="{{ $imagenes['imagen1'] }}" class="imagen" alt="DNI Frente" style="max-width: 100%; max-height: 100%;">
+            @if (isset($siniestro->imagen1_path))
+                <img src="{{ $siniestro->imagen1_path }}" class="imagen" alt="DNI Frente" style="max-width: 100%; max-height: 100%;">
             @endif
         </td>
         <td class="align-right" style="width: 25%;">
-            @if (isset($imagenes['imagen2']))
-                <img src="{{ $imagenes['imagen2'] }}" class="imagen" alt="DNI Dorso" style="max-width: 100%; max-height: 100%;">
+            @if (isset($siniestro->imagen2_path))
+                <img src="{{ $siniestro->imagen2_path }}" class="imagen" alt="DNI Dorso" style="max-width: 100%; max-height: 100%;">
             @endif
         </td>
     </tr>
     <tr>
         <td class="align-right" style="width: 25%;">
-            @if (isset($imagenes['registroFrente']))
-                <img src="{{ $imagenes['registroFrente'] }}" class="imagen" alt="registro Frente" style="max-width: 100%; max-height: 100%;">
+            @if (isset($siniestro->registroFrente_path))
+                <img src="{{ $siniestro->registroFrente_path }}" class="imagen" alt="registro Frente" style="max-width: 100%; max-height: 100%;">
             @endif
         </td>
         <td class="align-right" style="width: 25%;">
-            @if (isset($imagenes['registroDorso']))
-                <img src="{{ $imagenes['registroDorso'] }}" class="imagen" alt="registro Dorso" style="max-width: 100%; max-height: 100%;">
+            @if (isset($siniestro->registroDorso_path))
+                <img src="{{ $siniestro->registroDorso_path }}" class="imagen" alt="registro Dorso" style="max-width: 100%; max-height: 100%;">
             @endif
         </td>
     </tr>

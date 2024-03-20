@@ -57,7 +57,7 @@
                 </div>
                 <ul class="sidebar-menu">
                     <li class="menu-header">Dashboard</li>
-                    <li class="dropdown {{ request()->routeIs('dashboard')  }}">
+                    <li class="dropdown {{ request()->routeIs('dashboard')  ? 'active' : ''  }}">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                         <ul class="dropdown-menu">
                             <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -68,14 +68,14 @@
                     <li class="dropdown {{ request()->routeIs('registro.precio') || request()->routeIs('form.precio') ? 'active' : '' }}">
                         <a href="#" class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Cambio de Precios</span></a>
                         <ul class="dropdown-menu">
-                            @can('registrar-productos')
-                            <li class="{{ request()->routeIs('registro.precio') ? 'active' : '' }}">
-                                <a class="nav-link" href="{{ route('registro.precio') }}">Registrar Precios</a>
-                            </li>
-                            @endcan
                             @can('editar-form-productos')
                             <li class="{{ request()->routeIs('form.precio') ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('form.precio') }}">Form Cambio de Precios</a>
+                            </li>
+                            @endcan
+                            @can('registrar-productos')
+                            <li class="{{ request()->routeIs('registro.precio') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('registro.precio') }}">Registrar Precios</a>
                             </li>
                             @endcan
                         </ul>
