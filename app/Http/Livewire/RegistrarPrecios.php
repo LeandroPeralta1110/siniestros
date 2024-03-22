@@ -86,19 +86,32 @@ class RegistrarPrecios extends Component
     public function registrarPrecios()
 {
     $this->loading = true; // Activar estado de carga
-    
     try {
         // Iterar sobre los productos diferidos por lista de precios
         foreach ($this->productosDiferidosPorLista as $listaPrecioId => $productos) {
+            // Verificar si el ID de lista de precios es numérico
+            if (!is_numeric($listaPrecioId)) {
+                // Si el ID no es numérico, convertirlo a cadena (varchar)
+                $listaPrecioId = (string)$listaPrecioId;
+            }else{
+                $listaPrecioId = (string)$listaPrecioId;
+            }
+            
             foreach ($productos as $producto) {
-                // Realizar una consulta de actualización para cambiar el precio en la tabla 'Precios'
-                DB::connection('sqlsrv')->table('Precios')
-                    ->where('IdListaPrecio', $listaPrecioId)
-                    ->where('IdProducto', $producto['idProducto'])
-                    ->update(['Precio' => $producto['PrecioLocal']]);
+                if (!is_numeric($producto['idProducto'])) {
+                    // Si el ID no es numérico, convertirlo a cadena (varchar)
+                    $producto['idProducto'] = (string)$producto['idProducto'];
+                }else{
+                    $producto['idProducto'] = (string)$producto['idProducto'];
+                }
+                
+                    // Realizar una consulta de actualización para cambiar el precio en la tabla 'Precios'
+                    DB::connection('sqlsrv')->table('Precios')
+                        ->where('IdListaPrecio', $listaPrecioId)
+                        ->where('IdProducto', $producto['idProducto'])
+                        ->update(['Precio' => $producto['PrecioLocal']]);
             }
         }
-
         $this->successMessage = 'Precios registrados correctamente.';
     } catch (\Exception $e) {
         // Manejar errores si ocurren
@@ -107,7 +120,6 @@ class RegistrarPrecios extends Component
         $this->loading = false; // Desactivar estado de carga
     }
 }
-
 
     public function aplicarDescuentosClientes()
     {

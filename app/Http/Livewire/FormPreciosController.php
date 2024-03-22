@@ -53,7 +53,7 @@ class FormPreciosController extends Component
     
     // Consultar todas las listas de precios disponibles
     $listasPrecios = $this->listasPrecios->values();
-    
+
     // Consultar los productos para el producto seleccionado en todas las listas de precios
     foreach ($listasPrecios as $idListaPrecio) {
         // Consultar el producto para el producto y la lista de precios actual
@@ -99,7 +99,7 @@ class FormPreciosController extends Component
         
         // Consulta a la base local
         $productosLocal = Precio::where('IdListaPrecio', $listaPrecioId)->get();
-
+        
         // Guardar los productos locales en el array de productos
         foreach ($productosLocal as $productoLocal) {
             $this->productos[$productoLocal->idProducto] = [
@@ -109,7 +109,7 @@ class FormPreciosController extends Component
                 'PrecioSQL' => null // Inicialmente no se conoce el precio SQL
             ];
         }
-    
+        
         // Consulta a la base SQL
         $productosSQL = DB::connection('sqlsrv')
                         ->table('precios')
@@ -138,7 +138,7 @@ class FormPreciosController extends Component
             }
         }
         
-       /*   dd($this->productos); */
+        /*  dd($this->productos); */
     }
 
     public function actualizarPrecioLocal($idProducto, $nuevoPrecio, $idListaPrecio, $precioOriginal)
@@ -211,18 +211,29 @@ class FormPreciosController extends Component
             'Descripcion' => $productoLocal->Descripcion
         ];
     }
-
-    // Agregar productos SQL al array
+   
+   // Agregar productos SQL al array
     foreach ($productosSQL as $productoSQL) {
+        // Verificar si el producto local existe en la base SQL Server
+        if (!isset($productosTotales[$productoSQL->idProducto])) {
+            continue; // Saltar este producto y pasar al siguiente
+        }
+
+        // Verificar si la clave 'PrecioLocal' existe en el array combinado para este producto y lista de precios
+        $precioLocal = isset($productosTotales[$productoSQL->idProducto][$productoSQL->IdListaPrecio]['PrecioLocal'])
+            ? $productosTotales[$productoSQL->idProducto][$productoSQL->IdListaPrecio]['PrecioLocal']
+            : null;
+
+        // Agregar el producto SQL al array combinado
         $productosTotales[$productoSQL->idProducto][$productoSQL->IdListaPrecio] = [
             'idProducto' => $productoSQL->idProducto,
             'IdListaPrecio' => $productoSQL->IdListaPrecio,
-            'PrecioLocal' => $productosTotales[$productoSQL->idProducto][$productoSQL->IdListaPrecio]['PrecioLocal'], // Usar el precio local del primer array
+            'PrecioLocal' => $precioLocal, // Usar el precio local del primer array
             'PrecioSQL' => $productoSQL->precioSQL,
             'Descripcion' => $productoSQL->Descripcion
         ];
     }
-    
+
     // Iterar sobre los productos totales para comparar y actualizar los precios
     foreach ($productosTotales as $productosPorId) {
         foreach ($productosPorId as $producto) {
@@ -346,7 +357,7 @@ public function procesarArchivoExcel()
                 ];
             }
         }
-        /* dd($datos); */
+         dd($datos);
             // Recorrer los datos procesados del Excel
             foreach ($datos as $dato) {
                 $idListaPrecio = $dato['idListaPrecio'];

@@ -83,7 +83,7 @@ return [
             'url' => env('192.168.0.5'),
             'host' => env('DB_SQLSRV_HOST', '192.168.0.5'),
             'port' => env('DB_SQLSRV_PORT', '1433'),
-            'database' => env('DB_SQLSRV_DATABASE', 'H2O_JUMI'),
+            'database' => env('DB_SQLSRV_DATABASE', 'H2O_JUMI_29_12_23'),
             'username' => env('DB_SQLSRV_USERNAME', 'cafe'),
             'password' => env('DB_SQLSRV_PASSWORD', 'JumiCAFE3241'),
             'charset' => 'utf8',

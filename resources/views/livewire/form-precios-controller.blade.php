@@ -74,6 +74,7 @@
         </thead>
         <tbody>
             @foreach($productos as $producto)
+                @if(!empty($producto['PrecioLocal']) && !empty($producto['PrecioSQL']) )
                 <tr>
                     <td>{{ $producto['idProducto'] }}</td>
                     <td>{{ $producto['Descripcion'] }}</td>
@@ -98,6 +99,7 @@
                         @endif
                     </td>
                 </tr>
+                @endif
             @endforeach
         </tbody>
     </table>
