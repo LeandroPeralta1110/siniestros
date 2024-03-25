@@ -23,6 +23,9 @@ class FormPreciosController extends Component
     public $successMessage;
     public $errorMessage;
     public $selectedProducto;
+    public $datosArchivo; 
+    public $mostrarPopUpDatosArchivo = false;
+    public $datosPorListaPrecio;
     use WithFileUploads;
     
     public function mount()
@@ -44,6 +47,7 @@ class FormPreciosController extends Component
         $this->selectedListaPrecio = null; // Reiniciar la selección de lista de precios cuando se cambia el producto
     }
     
+    // Obtiene los productos por lista de precio.
     public function obtenerProductosPorListaPrecios()
 {
     // Reiniciar la variable $productos antes de actualizar
@@ -53,7 +57,7 @@ class FormPreciosController extends Component
     
     // Consultar todas las listas de precios disponibles
     $listasPrecios = $this->listasPrecios->values();
-
+   
     // Consultar los productos para el producto seleccionado en todas las listas de precios
     foreach ($listasPrecios as $idListaPrecio) {
         // Consultar el producto para el producto y la lista de precios actual
@@ -65,7 +69,7 @@ class FormPreciosController extends Component
             // Obtener el precio de la base local y el precio de la base SQL
             $precioLocal = $producto->Precio;
             
-            // Consultar el precio de la base SQL
+            // Consultar el precio de la base AGUAS
             $precioSQL = DB::connection('sqlsrv')
                     ->table('precios')
                     ->join('productos', 'precios.IdProducto', '=', 'productos.idProducto')
@@ -75,71 +79,84 @@ class FormPreciosController extends Component
                     ->where('productos.idProducto', $idProducto)
                     ->first();
 
-            // Agregar el producto con ambos precios a la lista de productos
-            $this->productos[] = [
-                'idListaPrecio' => $idListaPrecio, // Utiliza $idListaPrecio en lugar de $producto->idListaPrecio
-                'idProducto' => $idProducto, // Utiliza $idProducto en lugar de $producto->idProducto
-                'Descripcion' => $precioSQL->Descripcion, // Accede a la descripción desde $precioSQL
-                'descripcionLista' => $precioSQL->descripcionLista,
-                'PrecioLocal' => $precioLocal,
-                'PrecioSQL' => $precioSQL->precioSQL, // Accede al precio desde $precioSQL
-            ];
+            if($precioSQL){
+                // Agregar el producto con ambos precios a la lista de productos
+                $this->productos[] = [
+                    'idListaPrecio' => $idListaPrecio, 
+                    'idProducto' => $idProducto, 
+                    'Descripcion' => $precioSQL->Descripcion, 
+                    'descripcionLista' => $precioSQL->descripcionLista,
+                    'PrecioLocal' => $precioLocal,
+                    'PrecioSQL' => $precioSQL->precioSQL, 
+                ];
+            }
         }
     }
     /* dd($this->productos); */
 }
 
-    public function actualizarSeleccion()
-    {
-        // Reiniciar la variable $productos antes de actualizar
-        $this->productos = [];
+public function actualizarSeleccion()
+{
+    // Reiniciar la variable $productos antes de actualizar
+    $this->productos = [];
+
+    // Acceder al valor seleccionado por el usuario
+    $listaPrecioId = $this->selectedListaPrecio;
     
-        // Acceder al valor seleccionado por el usuario
-        $listaPrecioId = $this->selectedListaPrecio;
-        
-        // Consulta a la base local
-        $productosLocal = Precio::where('IdListaPrecio', $listaPrecioId)->get();
-        
-        // Guardar los productos locales en el array de productos
-        foreach ($productosLocal as $productoLocal) {
-            $this->productos[$productoLocal->idProducto] = [
-                'idProducto' => $productoLocal->idProducto,
-                'idListaPrecio' => $productoLocal->idListaPrecio, // Agregar el ID de la lista de precios
-                'PrecioLocal' => $productoLocal->Precio,
-                'PrecioSQL' => null // Inicialmente no se conoce el precio SQL
+    // Consulta a la base local
+    $productosLocal = Precio::where('IdListaPrecio', $listaPrecioId)->get();
+    
+    // Guardar los productos locales en el array de productos
+    foreach ($productosLocal as $productoLocal) {
+        $this->productos[$productoLocal->idProducto] = [
+            'idProducto' => $productoLocal->idProducto,
+            'idListaPrecio' => $productoLocal->idListaPrecio, // Agregar el ID de la lista de precios
+            'PrecioLocal' => $productoLocal->Precio,
+            'PrecioSQL' => null, // Inicialmente no se conoce el precio SQL
+            'Descripcion' => $productoLocal->Descripcion,
+            'Precio' => $productoLocal->Precio // Agregar el precio local
+        ];
+    }
+    
+    // Consulta a la base SQL
+    $productosSQL = DB::connection('sqlsrv')
+                    ->table('precios')
+                    ->join('productos', 'precios.IdProducto', '=', 'productos.idProducto')
+                    ->join('listas','precios.IdListaPrecio', '=', 'listas.IdListaPrecio')
+                    ->select('productos.idProducto', 'productos.Descripcion', 'precios.Precio as precioSQL','listas.Descrp as descripcionLista')
+                    ->where('precios.IdListaPrecio', $listaPrecioId)
+                    ->get();
+
+    // Agregar los productos de SQL Server al array de productos, si no existen previamente
+    foreach ($productosSQL as $productoSQL) {
+        if (isset($this->productos[$productoSQL->idProducto])) {
+            // Si el producto ya existe en la lista local, actualizar su precio SQL
+            $this->productos[$productoSQL->idProducto]['PrecioSQL'] = $productoSQL->precioSQL;
+            $this->productos[$productoSQL->idProducto]['Descripcion'] = $productoSQL->Descripcion;
+            $this->productos[$productoSQL->idProducto]['descripcionLista'] = $productoSQL->descripcionLista;
+        } else {
+            // Si el producto no existe en la lista local, agregarlo con su precio SQL
+            $precioLocal = Precio::firstOrCreate([
+                'idProducto' => $productoSQL->idProducto,
+                'IdListaPrecio' => $listaPrecioId
+            ],
+            [
+                'Precio' => $productoSQL->precioSQL,
+                'idListaPrecio' => $listaPrecioId 
+            ]);
+
+            $this->productos[$productoSQL->idProducto] = [
+                'idProducto' => $productoSQL->idProducto,
+                'PrecioLocal' => null, // El precio local se desconoce
+                'IdListaPrecio' => $precioLocal->IdListaPrecio,
+                'PrecioSQL' => $productoSQL->precioSQL,
+                'Descripcion' => $productoSQL->Descripcion,
+                'Precio' => $productoSQL->precioSQL // Agregar el precio local
             ];
         }
-        
-        // Consulta a la base SQL
-        $productosSQL = DB::connection('sqlsrv')
-                        ->table('precios')
-                        ->join('productos', 'precios.IdProducto', '=', 'productos.idProducto')
-                        ->join('listas','precios.IdListaPrecio', '=', 'listas.IdListaPrecio')
-                        ->select('productos.idProducto', 'productos.Descripcion', 'precios.Precio as precioSQL','listas.Descrp as descripcionLista')
-                        ->where('precios.IdListaPrecio', $listaPrecioId)
-                        ->get();
-    
-        // Agregar los productos de SQL Server al array de productos, si no existen previamente
-        foreach ($productosSQL as $productoSQL) {
-            if (isset($this->productos[$productoSQL->idProducto])) {
-                // Si el producto ya existe en la lista local, actualizar su precio SQL
-                $this->productos[$productoSQL->idProducto]['PrecioSQL'] = $productoSQL->precioSQL;
-                $this->productos[$productoSQL->idProducto]['Descripcion'] = $productoSQL->Descripcion;
-                $this->productos[$productoSQL->idProducto]['descripcionLista'] = $productoSQL->descripcionLista;
-            } else {
-                // Si el producto no existe en la lista local, agregarlo con su precio SQL
-                $this->productos[$productoSQL->idProducto] = [
-                    'idProducto' => $productoSQL->idProducto,
-                    'PrecioLocal' => null, // El precio local se desconoce
-                    'IdListaPrecio' => $productoLocal->IdListaPrecio,
-                    'PrecioSQL' => $productoSQL->precioSQL,
-                    'Descripcion' => $productoSQL->Descripcion
-                ];
-            }
-        }
-        
-        /*  dd($this->productos); */
     }
+}
+
 
     public function actualizarPrecioLocal($idProducto, $nuevoPrecio, $idListaPrecio, $precioOriginal)
     {
@@ -253,7 +270,6 @@ class FormPreciosController extends Component
         }
     }
     $this->actualizarSeleccion();
-
 }
 
 public function procesarArchivoExcel()
@@ -311,10 +327,16 @@ public function procesarArchivoExcel()
             'Precio' => 90,
         ];
 
-        // Procesar la primera tabla
-        $datosRangeTabla1 = 'A6:K25';
+       // Encontrar la última fila en la columna A
+        $ultimaFilaTabla1 = $hoja->getCell('A' . $hoja->getHighestRow())->getRow();
+
+        // Definir el rango dinámico
+        $datosRangeTabla1 = 'A6:K' . $ultimaFilaTabla1;
+
+        // Obtener los datos del rango dinámico
         $datosDataTabla1 = $hoja->rangeToArray($datosRangeTabla1, null, true, true, true);
 
+        // Procesar los datos
         $datos = [];
 
         foreach ($datosDataTabla1 as $fila => $rowData) {
@@ -339,11 +361,16 @@ public function procesarArchivoExcel()
                 }
             }
         }
+       
+        // Encontrar la última fila en la columna Q
+        $ultimaFila = $hoja->getCell('Q' . $hoja->getHighestRow())->getRow();
+        // Definir el rango dinámico
+        $datosRange2 = 'Q6:V' . $ultimaFila;
 
-        // Procesar la segunda tabla
-        $datosRange2 = 'Q6:V16';
+        // Obtener los datos del rango dinámico
         $datosData2 = $hoja->rangeToArray($datosRange2, null, true, true, true);
 
+        // Procesar los datos
         foreach ($datosData2 as $fila => $rowData) {
             if (isset($rowData['Q']) && strlen($rowData['Q']) <= 5) {
                 $producto = $rowData['Q'];
@@ -357,8 +384,9 @@ public function procesarArchivoExcel()
                 ];
             }
         }
-         dd($datos);
-            // Recorrer los datos procesados del Excel
+       
+         $this->mostrarPopUpDatos($datos);
+           /*  // Recorrer los datos procesados del Excel
             foreach ($datos as $dato) {
                 $idListaPrecio = $dato['idListaPrecio'];
                 $idProducto = $dato['idProducto'];
@@ -381,7 +409,7 @@ public function procesarArchivoExcel()
                     $precioExistente->save();
                     $this->actualizarSeleccion();
                 } 
-            }
+            } */
                 } else {
                     // Mostrar un mensaje de error si no se encontró la quinta hoja
                     session()->flash('error', 'La hoja "Sheet5" no se encontró en el archivo.');
@@ -392,6 +420,63 @@ public function procesarArchivoExcel()
             }
         }
 
+        public function mostrarPopUpDatos($datos){
+            $this->datosArchivo = $datos;
+        
+            // Agrupar los datos por idListaPrecio
+            $this->datosPorListaPrecio = collect($datos)->groupBy('idListaPrecio')->toArray();
+            // Asignar nombres a las listas de precios
+            $mapeoNombresListaPrecios = [
+                1 => 'GBA',
+                222 => 'CABA',
+                '07' => 'F/C GBA',
+                333 => 'F/C CABA',
+                'L10' => 'FRANQUICIAS',
+                10 => 'Municipalidad 3F',
+                555 => 'Colegios',
+                90 => 'GASTRONOMIA',
+            ];
+        
+            foreach ($this->datosPorListaPrecio as $idListaPrecio => $productos) {
+                $nombreListaPrecio = $mapeoNombresListaPrecios[$idListaPrecio] ?? 'Desconocido';
+                $this->datosPorListaPrecio[$idListaPrecio]['nombreListaPrecio'] = $nombreListaPrecio;
+            }
+        
+            $this->mostrarPopUpDatosArchivo = true;
+        }
+
+        public function cerrarPopup(){
+            $this->mostrarPopUpDatosArchivo = false;
+            $this->datosArchivo = [];
+        }
+
+        public function aceptarCambios(){
+            // Recorrer los datos procesados del Excel
+            foreach ($this->datosArchivo as $dato) {
+                $idListaPrecio = $dato['idListaPrecio'];
+                $idProducto = $dato['idProducto'];
+                $precioNuevo = $dato['precio'];
+            
+                // Eliminar el signo "$" y las comas del precio
+                $precioNuevo = str_replace(['$', ','], '', $precioNuevo);
+            
+                // Convertir el precio a un formato decimal
+                $precioNuevo = number_format((float) $precioNuevo, 3, '.', ''); // Formato con tres decimales
+            
+                // Buscar en la base de datos local el precio existente para el mismo idListaPrecio y idProducto
+                $precioExistente = Precio::where('idListaPrecio', $idListaPrecio)
+                                        ->where('idProducto', $idProducto)
+                                        ->first();
+
+                // Si el precio existe, actualizarlo; de lo contrario, crear un nuevo registro en la base de datos
+                if ($precioExistente) {
+                    $precioExistente->precio = $precioNuevo;
+                    $precioExistente->save();
+                    $this->actualizarSeleccion();
+                } 
+            }
+            $this->mostrarPopUpDatosArchivo = false;
+        }
     public function render()
     {
         return view('livewire.form-precios-controller');

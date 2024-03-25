@@ -17,6 +17,29 @@
     </div>
     <br>
 
+    @if ($mostrarPopUpDatosArchivo)
+    <div class="popup-container">
+        <div class="popup" style="overflow-y: auto; max-height: 400px;">
+                <h4>¿Desea registrar las siguientes Listas de Precios?</h4>
+            @foreach ($datosPorListaPrecio as $idListaPrecio => $productos)
+                <h3>Lista de Precios {{ $productos['nombreListaPrecio'] }}</h3>
+                @foreach ($productos as $producto)
+                    @if (is_array($producto))
+                        {{ $producto['idProducto'] }} - {{ $producto['precio'] }}
+                        <br>
+                    @endif
+                @endforeach
+                <hr>
+            @endforeach
+
+            <!-- Botones -->
+            <button wire:click="aceptarCambios">Aceptar cambios</button>
+            <button wire:click="cerrarPopup">Cerrar</button>
+            <span wire:loading wire:target="aceptarCambios" class="cargando-icono-blue" role="status" aria-hidden="true"></span>
+        </div>
+    </div>
+@endif
+
     @if($successMessage)
     <div class="alert alert-success" role="alert">
         {{ $successMessage }}

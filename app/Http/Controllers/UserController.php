@@ -21,32 +21,43 @@ class UserController extends Controller
     }
 
     public function create()
-{
-    // Obtener todos los roles disponibles
-    $roles = Role::pluck('name', 'id');
-    
-    // Definir los roles permitidos para crear usuarios según el rol del usuario autenticado
-    $allowedRoles = [];
-    
-    // Verificar el rol del usuario autenticado
-    if (Auth::user()->roles->contains('name', 'admin')) {
-        // Si el usuario es un administrador, permitir todos los roles
-        $allowedRoles = $roles->all();
-    } elseif (Auth::user()->roles->contains('name', 'supervisor')) {
-        // Si el usuario es un supervisor, permitir solo el rol de usuario
-        $allowedRoles = $roles->filter(function ($role) {
-            return $role === 'usuario';
-        })->all();
-    } elseif (Auth::user()->roles->contains('name', 'supervisor-productos')) {
-        // Si el usuario es un supervisor, permitir solo el rol de usuario
-        $allowedRoles = $roles->filter(function ($role) {
-            return $role === 'usuario-productos';
-        })->all();
+    {
+        // Obtener todos los roles disponibles
+        $roles = Role::pluck('name', 'id');
+        
+        // Definir los roles permitidos para crear usuarios según el rol del usuario autenticado
+        $allowedRoles = [];
+        
+        // Verificar el rol del usuario autenticado
+        if (Auth::user()->roles->contains('name', 'admin')) {
+            // Si el usuario es un administrador, permitir todos los roles
+            $allowedRoles = $roles->all();
+            // Cambiar el nombre del rol "supervisor" a "supervisor-siniestros" y "usuario" a "usuario-siniestros"
+            $allowedRoles = array_map(function ($roleName) {
+                if ($roleName === 'supervisor') {
+                    return 'supervisor-siniestros';
+                } elseif ($roleName === 'usuario') {
+                    return 'usuario-siniestros';
+                } else {
+                    return $roleName;
+                }
+            }, $allowedRoles);
+        } elseif (Auth::user()->roles->contains('name', 'supervisor')) {
+            // Si el usuario es un supervisor, permitir solo el rol de usuario
+            $allowedRoles = $roles->filter(function ($roleName) {
+                if($roleName === 'usuario'){
+                    return $roleName === 'usuario-siniestros';
+                }
+            })->all();
+        } elseif (Auth::user()->roles->contains('name', 'supervisor-productos')) {
+            // Si el usuario es un supervisor de productos, permitir solo el rol de usuario de productos
+            $allowedRoles = $roles->filter(function ($role) {
+                return $role === 'usuario-productos';
+            })->all();
+        }
+        // Pasar los roles permitidos a la vista solo si hay roles permitidos
+        return view('users.create', ['allowedRoles' => $allowedRoles]);
     }
-    
-    // Pasar los roles permitidos a la vista solo si hay roles permitidos
-    return view('users.create', ['allowedRoles' => $allowedRoles]);
-}
 
     /**
      * Store a newly created resource in storage.

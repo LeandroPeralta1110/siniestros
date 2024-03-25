@@ -26,7 +26,7 @@
     @endif
     <!-- Mostrar mensaje de error si está presente -->
     @if ($errorMessage)
-        <div class="alert alert-error" role="alert">
+        <div class="alert alert-danger" role="alert">
             {{ $errorMessage }}
         </div>
     @endif
@@ -55,9 +55,16 @@
                     <td>{{ $producto['Descripcion'] }}</td>
                     <td>{{ $producto['PrecioSQL'] }}</td>
                     <td>{{ $producto['PrecioLocal'] }}</td>
+                    <td>
+                        @if (isset($producto['actualizado']) && $producto['actualizado'])
+                            <!-- Mostrar icono de tick si el producto ha sido actualizado -->
+                            <i class="fas fa-check-circle text-success"></i>
+                        @endif
+                    </td>
                 </tr>
             @endforeach
         </tbody>
+        
     </table>
     @endforeach
     @else 

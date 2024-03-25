@@ -44,6 +44,17 @@ class RegistroSiniestros extends Component
         $this->mostrarEditPopup = true;
     }
 
+    public function guardarCambios()
+    {
+        // Guardar los cambios en el siniestro
+        $this->siniestroParaEditar->save();
+        
+        // Cerrar el popup de edición después de guardar los cambios
+        $this->mostrarEditPopup = false;
+        
+        // Opcional: Mostrar un mensaje de éxito o redirigir a alguna otra página
+    }
+
     public function deleteSiniestro($id)
     {
         $siniestro = Siniestro::findOrFail($id);

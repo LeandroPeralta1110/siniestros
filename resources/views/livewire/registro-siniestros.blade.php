@@ -41,17 +41,19 @@
                 <p>Fecha de Creación: {{ $siniestroParaEditar->created_at }}</p>
                 
                 <!-- Mostrar los demás campos del siniestro para editar -->
+               <!-- Formulario -->
                 <form wire:submit.prevent="guardarCambios">
+                    @csrf
                     @foreach($siniestroParaEditar->getAttributes() as $key => $value)
-                        @if (!str_ends_with($key, '_path')) <!-- Excluimos los campos que terminan con '_path' (las imágenes) -->
+                        @if (!str_ends_with($key, '_path'))
                             <div>
                                 <label for="{{ $key }}">{{ $key }}</label>
                                 @if(is_numeric($siniestroParaEditar->{$key}))
-                                    <input type="number" id="{{ $key }}" value="{{$value}}" name="{{ $key }}" wire:model="siniestroParaEditar.{{ $key }}" required>
+                                    <input type="number" id="{{ $key }}" value="{{ $siniestroParaEditar->{$key} }}" wire:model="siniestroParaEditar.{{ $key }}" required>
                                 @elseif(is_a($siniestroParaEditar->{$key}, 'Illuminate\Support\Carbon'))
-                                    <input type="datetime-local" id="{{ $key }}" value="{{$value}}" name="{{ $key }}" wire:model="siniestroParaEditar.{{ $key }}" required>
+                                    <input type="datetime-local" id="{{ $key }}" value="{{ $siniestroParaEditar->{$key} }}" wire:model="siniestroParaEditar.{{ $key }}" required>
                                 @else
-                                    <input type="text" id="{{ $key }}" value="{{$value}}" name="{{ $key }}" wire:model="siniestroParaEditar.{{ $key }}" required>
+                                    <input type="text" id="{{ $key }}"value="{{ $siniestroParaEditar->{$key} }}" wire:model="siniestroParaEditar.{{ $key }}" required>
                                 @endif
                             </div>
                         @endif

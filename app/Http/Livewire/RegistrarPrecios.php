@@ -84,43 +84,47 @@ class RegistrarPrecios extends Component
     }
 
     public function registrarPrecios()
-{
-    $this->loading = true; // Activar estado de carga
-    try {
-        // Iterar sobre los productos diferidos por lista de precios
-        foreach ($this->productosDiferidosPorLista as $listaPrecioId => $productos) {
-            // Verificar si el ID de lista de precios es numérico
-            if (!is_numeric($listaPrecioId)) {
-                // Si el ID no es numérico, convertirlo a cadena (varchar)
-                $listaPrecioId = (string)$listaPrecioId;
-            }else{
-                $listaPrecioId = (string)$listaPrecioId;
-            }
-            
-            foreach ($productos as $producto) {
-                if (!is_numeric($producto['idProducto'])) {
+    {
+        $this->loading = true; // Activar estado de carga
+        try {
+            // Iterar sobre los productos diferidos por lista de precios
+            foreach ($this->productosDiferidosPorLista as $listaPrecioId => &$productos) {
+                // Verificar si el ID de lista de precios es numérico
+                if (!is_numeric($listaPrecioId)) {
                     // Si el ID no es numérico, convertirlo a cadena (varchar)
-                    $producto['idProducto'] = (string)$producto['idProducto'];
-                }else{
-                    $producto['idProducto'] = (string)$producto['idProducto'];
+                    $listaPrecioId = (string) $listaPrecioId;
+                }{
+                    $listaPrecioId = (string) $listaPrecioId;
                 }
-                
+    
+                foreach ($productos as $indice => &$producto) {
+                    if (!is_numeric($producto['idProducto'])) {
+                        // Si el ID no es numérico, convertirlo a cadena (varchar)
+                        $producto['idProducto'] = (string) $producto['idProducto'];
+                    }else{
+                        $producto['idProducto'] = (string) $producto['idProducto'];
+                    }
+    
                     // Realizar una consulta de actualización para cambiar el precio en la tabla 'Precios'
                     DB::connection('sqlsrv')->table('Precios')
                         ->where('IdListaPrecio', $listaPrecioId)
                         ->where('IdProducto', $producto['idProducto'])
                         ->update(['Precio' => $producto['PrecioLocal']]);
+    
+                    // Eliminar el producto del array si se actualizó correctamente en la base de datos
+                    $productos[$indice]['actualizado'] = true;
+                }
             }
-        }
-        $this->successMessage = 'Precios registrados correctamente.';
-    } catch (\Exception $e) {
-        // Manejar errores si ocurren
-        $this->errorMessage = 'Error al registrar precios: ' . $e->getMessage();
-    } finally {
-        $this->loading = false; // Desactivar estado de carga
-    }
-}
 
+            $this->successMessage = 'Precios registrados correctamente.';
+        } catch (\Exception $e) {
+            // Manejar errores si ocurren
+            $this->errorMessage = 'Error al registrar precios: ' . $e->getMessage();
+        } finally {
+            $this->loading = false; // Desactivar estado de carga
+        }
+    }
+    
     public function aplicarDescuentosClientes()
     {
         $this->loading = true; // Activar estado de carga
