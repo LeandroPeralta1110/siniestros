@@ -384,7 +384,7 @@ public function procesarArchivoExcel()
                 ];
             }
         }
-       
+        
          $this->mostrarPopUpDatos($datos);
            /*  // Recorrer los datos procesados del Excel
             foreach ($datos as $dato) {
@@ -468,7 +468,7 @@ public function procesarArchivoExcel()
                                         ->where('idProducto', $idProducto)
                                         ->first();
 
-                // Si el precio existe, actualizarlo; de lo contrario, crear un nuevo registro en la base de datos
+                // Si el precio existe, actualizarlo;
                 if ($precioExistente) {
                     $precioExistente->precio = $precioNuevo;
                     $precioExistente->save();
@@ -477,8 +477,9 @@ public function procesarArchivoExcel()
             }
             $this->mostrarPopUpDatosArchivo = false;
         }
-    public function render()
-    {
-        return view('livewire.form-precios-controller');
-    }
+
+        public function render()
+        {
+            return view('livewire.form-precios-controller');
+        }
 }

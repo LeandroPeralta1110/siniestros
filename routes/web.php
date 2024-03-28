@@ -45,6 +45,8 @@ Route::middleware([
     });
 
     Route::get('/registro-siniestros', RegistroSiniestros::class)->name('registro.siniestros');
+    Route::post('/registro-siniestros-edit', [RegistroSiniestros::class, 'updateSiniestro'])->name('siniestros.edit');
+
     Route::get('/siniestro/pdf/{id}', [RegistroSiniestros::class, 'showPdf'])->name('siniestro.pdf');
 
     Route::middleware(['can:editar-form-productos'])->group(function () {

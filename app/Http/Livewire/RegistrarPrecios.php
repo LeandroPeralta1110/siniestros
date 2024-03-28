@@ -56,10 +56,7 @@ class RegistrarPrecios extends Component
         try {
             // Ejecutar la sentencia SQL en la conexión 'sqlsrv'
             DB::connection('sqlsrv')->statement("
-                use h2o_jumi;
-                go;
                 drop table if exists tmp_descuentosXporcentaje;
-                go;
     
                 select c.nrocta, p.idproducto, precio, 
                     preciolista = (select dbo.Get_PrecioPorClienteProducto_sinprecioespecial(c.nrocta, p.idproducto, 0, 0)), 
@@ -134,7 +131,6 @@ class RegistrarPrecios extends Component
             DB::connection('sqlsrv')->statement("
                 alter table tmp_descuentosXporcentaje
                 add precio_mod numeric(18,2)
-                go
                 
                 update tmp_descuentosXporcentaje set  precio_mod=(select dbo.Get_PrecioPorClienteProducto_sinprecioespecial(tmp_descuentosXporcentaje.nrocta,tmp_descuentosXporcentaje.idproducto,0,0))
                 

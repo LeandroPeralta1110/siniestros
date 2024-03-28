@@ -56,14 +56,6 @@ class Siniestro extends Model
         'daños2_path',
         'dañosTercero1_path',
         'dañosTercero2_path',
-        'imagen1_path',
-        'imagen2_path',
-        'daños1_path',
-        'daños2_path',
-        'registroFrente_path',
-        'registroDorso_path',
-        'dañosTercero1_path',
-        'dañosTercero2_path',
     ];
 
     public function user()

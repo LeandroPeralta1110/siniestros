@@ -15,6 +15,7 @@ class RegistroSiniestros extends Component
     public $mostrarEditPopup = false; 
     public $pdfUrl;
     public $siniestroParaEditar;
+    public $datosActualizados = [];
 
     public function mount()
     {
@@ -37,22 +38,19 @@ class RegistroSiniestros extends Component
         $this->mostrarEditPopup = false;
     }
    
-    public function editSiniestro($id)
+        public function editSiniestro($id)
     {
         // Obtener los datos del siniestro correspondiente al ID
         $this->siniestroParaEditar = Siniestro::findOrFail($id);
+        
         $this->mostrarEditPopup = true;
     }
 
-    public function guardarCambios()
+    public function updateSiniestro()
     {
-        // Guardar los cambios en el siniestro
         $this->siniestroParaEditar->save();
-        
-        // Cerrar el popup de edición después de guardar los cambios
+        dd($this->siniestroParaEditar);
         $this->mostrarEditPopup = false;
-        
-        // Opcional: Mostrar un mensaje de éxito o redirigir a alguna otra página
     }
 
     public function deleteSiniestro($id)

@@ -15,7 +15,7 @@
                 <tr>
                     <td>{{ $siniestro->id }}</td>
                     <td>{{ $siniestro->user->name }}</td>
-                    <td>{{ $siniestro->created_at }}</td>
+                    <td>{{ \carbon\carbon::parse($siniestro->created_at)->format('d-m-Y') }}</td>
                     <td>
                         <!-- Botón para abrir la ventana modal -->
                         <button wire:click="showPdf({{ $siniestro->id }})" class="btn btn-primary">Ver PDF</button>
@@ -30,7 +30,47 @@
         </tbody>
     </table>
 
-    @if($mostrarEditPopup != false)
+    @if($mostrarEditPopup)
+    <div class="popup-container">
+        <div class="popup">
+            <div>
+                <h2>Editando Siniestro: {{ $siniestroParaEditar->id }}</h2>
+                <p>Creado por: {{ $siniestroParaEditar->user->name }}</p>
+                <p>Fecha de Creación: {{ $siniestroParaEditar->created_at }}</p>
+                
+                <form wire:submit.prevent="updateSiniestro">
+
+                        <label for="nombreApellidoChofer">Nombre y Apellido del Chofer</label>
+                        <input type="text" name="nombreApellidoChofer" id="nombreApellidoChofer" wire:model="siniestroParaEditar.nombreApellidoChofer" value="{{ $siniestroParaEditar->nombreApellidoChofer }}">
+
+                        <label for="DNIchofer">DNI del Chofer</label>
+                        <input type="text" name="DNIchofer" id="DNIchofer" wire:model="siniestroParaEditar.DNIchofer" value="{{ $siniestroParaEditar->DNIchofer }}">
+
+                        <label for="legajoChofer">Legajo del Chofer</label>
+                        <input type="text" name="legajoChofer" id="legajoChofer" wire:model="siniestroParaEditar.legajoChofer" value="{{ $siniestroParaEditar->legajoChofer }}">
+
+                        <label for="telChof">Teléfono del Chofer</label>
+                        <input type="text" name="telChof" id="telChof" wire:model="siniestroParaEditar.telChof" value="{{ $siniestroParaEditar->telChof }}">
+
+                        <label for="nom_ape_ayudante">Nombre y Apellido del Ayudante</label>
+                        <input type="text" name="nom_ape_ayudante" id="nom_ape_ayudante" wire:model="siniestroParaEditar.nom_ape_ayudante" value="{{ $siniestroParaEditar->nom_ape_ayudante }}">
+
+                        <label for="patente_vehiculo">Patente del Vehículo</label>
+                        <input type="text" name="patente_vehiculo" id="patente_vehiculo" wire:model="siniestroParaEditar.patente_vehiculo" value="{{ $siniestroParaEditar->patente_vehiculo }}">
+
+                        <label for="interno_vehiculo">Interno del Vehículo</label>
+                        <input type="text" name="interno_vehiculo" id="interno_vehiculo" wire:model="siniestroParaEditar.interno_vehiculo" value="{{ $siniestroParaEditar->interno_vehiculo }}">
+
+                    <input type="hidden" name="id" value="{{ $siniestroParaEditar->id }}"> <!-- Agregar un campo oculto con el ID del siniestro -->
+                    <button type="submit">Guardar cambios</button>
+                    <button wire:click="closeEditPopup">Cancelar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+@endif
+
+    {{-- @if($mostrarEditPopup != false)
     <div class="popup-container">
         <div class="popup" style="overflow-y: auto;">
             <span class="close" wire:click="closeEditPopup">&times;</span>
@@ -64,7 +104,7 @@
             </div>
         </div>
     </div>
-@endif
+@endif --}}
 
      <!-- Ventana modal para mostrar el PDF -->
      @if($mostrarPopup)
